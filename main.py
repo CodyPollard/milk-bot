@@ -1,4 +1,4 @@
-import discord, token
+import discord, secrets
 from discord.ext.commands import Bot
 
 my_bot = Bot(command_prefix="!")
@@ -11,4 +11,4 @@ async def on_ready():
 async def hello(*args):
     return await my_bot.say("Hello, world!")
 
-my_bot.run(token.token)
+my_bot.run(secrets.token_id)
