@@ -18,7 +18,7 @@ def add_quote(msg):
     if '"' in msg:
         print('This contains quotes')
         new = msg.split(" ")
-        if '-' in new[len(new)-1]:
+        if '- ' in new[len(new)-1]:
             print("Thanks for adding an author")
             with open(MISC_PATH+'quotes.txt', 'a') as f:
                 f.write('\n')
