@@ -20,17 +20,9 @@ async def info(*args):
 @my_bot.command(pass_context=True)
 async def ra(ctx, *args):
     r = ctx.message.server.roles
-    return await my_bot.add_roles(ctx.message.author, r[-2])
-
-@my_bot.command(pass_context=True)
-async def test(ctx, *args):
-    r = ctx.message.server.roles
     for i in r:
-        print(i)
         if i.name == "Bot Tester":
             return await my_bot.add_roles(ctx.message.author, i)
-
-
 
 
 @my_bot.command()
