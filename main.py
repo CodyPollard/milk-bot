@@ -1,14 +1,14 @@
 from discord.ext.commands import Bot
-from Misc import quotes
+from misc import misc
 import random, secrets
 
 my_bot = Bot(command_prefix="!")
-q = quotes.quote_list
+q = misc.quote_list
 
 @my_bot.event
 async def on_ready():
     print("Client logged in")
-    quotes.update_quotes()
+    misc.update_quotes()
 
 # Meta Commands #
 
@@ -43,16 +43,16 @@ async def add(ctx, *args):
     msg = ctx.message.content
     auth = ctx.message.author
     try:
-        quotes.add_quote(msg)
+        misc.add_quote(msg)
         return await my_bot.say('Quote successfuly added.')
-    except quotes.SanitationError as exception:
+    except misc.ValidationError as exception:
         return await my_bot.say(exception)
 
 @my_bot.command()
 async def quote(*args):
     return await my_bot.say(random.choice(q))
 
-# Misc Commands #
+# misc Commands #
 
 @my_bot.command()
 async def imgay(*args):
