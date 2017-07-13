@@ -4,6 +4,7 @@ import random, secrets
 
 my_bot = Bot(command_prefix="!")
 q = misc.quote_list
+eight = misc.eightball
 
 @my_bot.event
 async def on_ready():
@@ -52,12 +53,15 @@ async def add(ctx, *args):
 async def quote(*args):
     return await my_bot.say(random.choice(q))
 
-# misc Commands #
+# Other Commands #
 
 @my_bot.command()
 async def imgay(*args):
     return await my_bot.say('\nI M G A Y\nM\nG\nA\nY')
 
+@my_bot.command(name='8ball')
+async def eightball(*args):
+    return await my_bot.say(random.choice(eight))
 
 # Start the bot
 my_bot.run(secrets.token_id)
