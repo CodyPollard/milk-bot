@@ -37,6 +37,10 @@ async def channels(*args):
         channels.append(i.name)
     return await my_bot.say('List of currently available channels: \n{}'.format(channels))
 
+@my_bot.command()
+async def templink(*args):
+    return await my_bot.say("Temp link: https://discord.gg/5tnDXvZ")
+
 # Quote Commands #
 
 @my_bot.command(pass_context=True)
