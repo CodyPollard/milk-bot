@@ -3,6 +3,7 @@
 from settings import MISC_PATH
 quote_list = []
 
+# Used for validating in add_quote
 class ValidationError(Exception):
     pass
 
@@ -15,15 +16,15 @@ def update_quotes():
             quote_list.append(line)
 
 def add_quote(msg):
+    # Validate that the given quote has quotation marks and an author
     if '"' in msg:
-        print('This contains quotes')
-        new = msg.split(" ")
-        if '-' in new[len(new)-1]:
-            print("Thanks for adding an author")
+        newMsg = msg.split(" ")
+        if '-' in newMsg[len(newMsg)-1]:
+            # Write the quote to quotes.txt and strip the !add prefix
             with open(MISC_PATH+'quotes.txt', 'r') as f:
                 f.write('\n')
-                for i in range(1, len(new)):
-                    f.write(new[i] + " ")
+                for i in range(1, len(newMsg)):
+                    f.write(newMsg[i] + " ")
             update_quotes()
             return True
         else:
@@ -37,7 +38,5 @@ eightball = ['It is certain','It is decidedly so','Without a doubt','Yes definit
                   'Better not tell you now','Cannot predict now','Concentrate and ask again',"Don't count on it",
                   'My reply is no','My sources say no','Outlook not so good','Very doubtful']
 
-
 if __name__ == "__main__":
-    # print(random.choice(eightball))
     pass
