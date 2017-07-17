@@ -18,7 +18,7 @@ def update_quotes():
 def add_quote(msg):
     # Validate that the given quote has quotation marks and an author
     if '"' in msg:
-        newMsg = msg.split(" ")
+        newMsg = msg.split('"')
         if '-' in newMsg[len(newMsg)-1]:
             # Write the quote to quotes.txt and strip the !add prefix
             with open(MISC_PATH+'quotes.txt', 'a') as f:
