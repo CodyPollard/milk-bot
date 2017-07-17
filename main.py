@@ -27,7 +27,7 @@ async def ra(ctx, *args):
         if i.name == "Bot Tester":
             return await milk_bot.add_roles(ctx.message.author, i)
 
-@my_bot.command()
+@milk_bot.command()
 async def templink(*args):
     """Displays a join link for the discord server"""
     return await milk_bot.say("Temp link: https://discord.gg/5tnDXvZ")
