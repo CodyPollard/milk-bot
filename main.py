@@ -29,7 +29,8 @@ async def ra(ctx, *args):
 
 @my_bot.command()
 async def templink(*args):
-    return await my_bot.say("Temp link: https://discord.gg/5tnDXvZ")
+    """Displays a join link for the discord server"""
+    return await milk_bot.say("Temp link: https://discord.gg/5tnDXvZ")
 
 # Quote Commands #
 
