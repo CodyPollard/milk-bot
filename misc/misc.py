@@ -18,10 +18,16 @@ def update_quotes():
 def add_quote(msg):
     # Validate that the given quote has quotation marks and an author
     if '"' in msg:
+<<<<<<< HEAD
         newMsg = msg.split(" ")
         if '-' in newMsg[len(newMsg)-1]:
             # Write the quote to quotes.txt and strip the !add prefix
             with open(MISC_PATH+'quotes.txt', 'r') as f:
+=======
+        new = msg.split('"')
+        if '-' in new[len(new)-1]:
+            with open(MISC_PATH+'quotes.txt', 'a') as f:
+>>>>>>> e897b02f898e3d4d59f9ddc2171fa2e642d9a729
                 f.write('\n')
                 for i in range(1, len(newMsg)):
                     f.write(newMsg[i] + " ")
@@ -39,4 +45,9 @@ eightball = ['It is certain','It is decidedly so','Without a doubt','Yes definit
                   'My reply is no','My sources say no','Outlook not so good','Very doubtful']
 
 if __name__ == "__main__":
+<<<<<<< HEAD
     pass
+=======
+    # print(random.choice(eightball))
+    pass
+>>>>>>> e897b02f898e3d4d59f9ddc2171fa2e642d9a729

@@ -27,6 +27,10 @@ async def ra(ctx, *args):
         if i.name == "Bot Tester":
             return await milk_bot.add_roles(ctx.message.author, i)
 
+@my_bot.command()
+async def templink(*args):
+    return await my_bot.say("Temp link: https://discord.gg/5tnDXvZ")
+
 # Quote Commands #
 
 @milk_bot.command(pass_context=True)
