@@ -2,10 +2,7 @@ from settings import MISC_PATH
 quote_list = []
 
 
-
-
 # Quotes #
-
 class ValidationError(Exception):
     pass
 
@@ -39,9 +36,6 @@ def add_quote(msg):
             raise ValidationError('Please add an author at the end of your quote.')
     else:
         raise ValidationError('Please use quotation marks when adding a quote.')
-
-
-
 
 
 if __name__ == "__main__":
