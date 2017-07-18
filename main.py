@@ -1,6 +1,6 @@
 from discord.ext.commands import Bot
-from misc import misc
-import random, secrets
+from misc import misc, quotes
+import random, secrets, time
 
 milk_bot = Bot(command_prefix="!")
 quoteList = misc.quote_list
@@ -60,6 +60,15 @@ async def imgay(*args):
 async def eightball(*args):
     """Standard 8-ball"""
     return await milk_bot.say(random.choice(eight))
+
+@milk_bot.command()
+async def testing(*args):
+    """First rule of fight club"""
+    q = quotes.Quote('!add "This is a quote" -Bot')
+    misc.update_quotes()
+    print("Quotes updated")
+    t = time.process_time()
+    return await milk_bot.say('Command run time: ' + str(t))
 
 # Start the bot
 milk_bot.run(secrets.token_id)
