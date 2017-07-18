@@ -3,13 +3,13 @@ from misc import misc, quotes
 import random, secrets, time
 
 milk_bot = Bot(command_prefix="!")
-quoteList = misc.quote_list
+quoteList = quotes.quote_list
 eight = misc.eightball
 
 @milk_bot.event
 async def on_ready():
     print("Client logged in")
-    misc.update_quotes()
+    quotes.update_quotes()
 
 # Meta Commands #
 
@@ -39,7 +39,7 @@ async def add(ctx, *args):
     """Adds the message content to quotes.txt if formated correctly"""
     msg = ctx.message.content
     try:
-        misc.add_quote(msg)
+        quotes.add_quote(msg)
         return await milk_bot.say('Quote successfuly added.')
     except misc.ValidationError as exception:
         return await milk_bot.say(exception)
@@ -47,7 +47,8 @@ async def add(ctx, *args):
 @milk_bot.command()
 async def quote(*args):
     """Displays a random quote from quotes.txt"""
-    return await milk_bot.say(random.choice(quoteList))
+    t = time.process_time()
+    return await milk_bot.say(random.choice(quoteList) + '\n'+str(t))
 
 # Other Commands #
 
@@ -58,15 +59,12 @@ async def imgay(*args):
 
 @milk_bot.command(name='8ball')
 async def eightball(*args):
-    """Standard 8-ball"""
+    """Ask it a question"""
     return await milk_bot.say(random.choice(eight))
 
 @milk_bot.command()
 async def testing(*args):
     """First rule of fight club"""
-    q = quotes.Quote('!add "This is a quote" -Bot')
-    misc.update_quotes()
-    print("Quotes updated")
     t = time.process_time()
     return await milk_bot.say('Command run time: ' + str(t))
 

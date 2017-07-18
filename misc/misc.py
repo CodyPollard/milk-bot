@@ -1,12 +1,14 @@
-# quotes.py handles the reading and writing of quotes.txt
+# misc.py handles the reading and writing of quotes.txt
 # Used by the bot's !quote command
 from settings import MISC_PATH
 from misc import quotes
 quote_list = []
 
+
 # Used for validating in add_quote
 class ValidationError(Exception):
     pass
+
 
 # Quotes #
 # Open quotes.txt and read the contents into quote_list
@@ -40,5 +42,4 @@ eightball = ['It is certain','It is decidedly so','Without a doubt','Yes definit
                   'My reply is no','My sources say no','Outlook not so good','Very doubtful']
 
 if __name__ == "__main__":
-    q = quotes.Quote('!add "Testing Quote" -Bot')
     pass
