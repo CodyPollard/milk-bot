@@ -29,7 +29,7 @@ def add_quote(msg):
             # Write the quote to quotes.txt and strip the !add prefix
             with open(MISC_PATH+'quotes.txt', 'a') as f:
                 f.write('\n')
-                f.write(q.msg + ' ' + q.author)
+                f.write('"' + q.msg + '"' + q.author)
             update_quotes()
             return True
         else:
