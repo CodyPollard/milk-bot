@@ -47,8 +47,7 @@ async def add(ctx, *args):
 @milk_bot.command()
 async def quote(*args):
     """Displays a random quote from quotes.txt"""
-    t = time.process_time()
-    return await milk_bot.say(random.choice(quoteList) + '\n'+str(t))
+    return await milk_bot.say(random.choice(quoteList))
 
 # Other Commands #
 
@@ -61,12 +60,6 @@ async def imgay(*args):
 async def eightball(*args):
     """Ask it a question"""
     return await milk_bot.say(random.choice(eight))
-
-@milk_bot.command()
-async def testing(*args):
-    """First rule of fight club"""
-    t = time.process_time()
-    return await milk_bot.say('Command run time: ' + str(t))
 
 # Start the bot
 milk_bot.run(secrets.token_id)
