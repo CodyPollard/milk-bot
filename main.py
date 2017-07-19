@@ -41,7 +41,7 @@ async def add(ctx, *args):
     try:
         quotes.add_quote(msg)
         return await milk_bot.say('Quote successfuly added.')
-    except misc.ValidationError as exception:
+    except quotes.ValidationError as exception:
         return await milk_bot.say(exception)
 
 @milk_bot.command()
