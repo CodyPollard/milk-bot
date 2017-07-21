@@ -9,7 +9,7 @@ eight = misc.eightball
 @milk_bot.event
 async def on_ready():
     print("Client logged in")
-    quotes.update_quotes()
+
 
 # Meta Commands #
 
@@ -17,7 +17,8 @@ async def on_ready():
 async def info(*args):
     """Displays info about the bot's code and the !ra command"""
     return await milk_bot.say('I am currently hosted at: https://github.com/CodyPollard/milk-bot\n'
-                            'To suggest features and track development type !ra for access to the bot-help channel.')
+                              'To suggest features and track development type !ra for access to the bot-help channel.')
+
 
 @milk_bot.command(pass_context=True)
 async def ra(ctx, *args):
@@ -39,15 +40,19 @@ async def add(ctx, *args):
     """Adds the message content to quotes.txt if formated correctly"""
     msg = ctx.message.content
     try:
-        quotes.add_quote(msg)
+        quotes.validate_quote(msg)
         return await milk_bot.say('Quote successfuly added.')
-    except quotes.ValidationError as exception:
+    except misc.ValidationError as exception:
         return await milk_bot.say(exception)
 
 @milk_bot.command()
 async def quote(*args):
     """Displays a random quote from quotes.txt"""
-    return await milk_bot.say(random.choice(quoteList))
+    q = quotes.print_quote()
+    call_total = quotes.get_call_count_total()
+    formatted = '{0:.3g}'.format(q['call_count']/call_total*100)
+    return await milk_bot.say('"{}"{} \nThis quote has been used {} times accounting for'
+                              ' {}% of total usage.'.format(q['msg'], q['author'], q['call_count'], formatted))
 
 # Other Commands #
 
@@ -55,6 +60,7 @@ async def quote(*args):
 async def imgay(*args):
     """First rule of fight club"""
     return await milk_bot.say('\nI M G A Y\nM\nG\nA\nY')
+
 
 @milk_bot.command(name='8ball')
 async def eightball(*args):
