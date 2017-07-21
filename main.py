@@ -30,14 +30,14 @@ async def ra(ctx, *args):
 
 @milk_bot.command()
 async def templink(*args):
-    """Displays a join link for the discord server"""
+    """Displays a join link for the Discord server"""
     return await milk_bot.say("Temp link: https://discord.gg/5tnDXvZ")
 
 # Quote Commands #
 
 @milk_bot.command(pass_context=True)
 async def add(ctx, *args):
-    """Adds the message content to quotes.txt if formated correctly"""
+    """Adds the message content to quotes.txt if formatted correctly"""
     msg = ctx.message.content
     try:
         quotes.validate_quote(msg)
@@ -58,8 +58,8 @@ async def quote(*args):
 
 @milk_bot.command()
 async def imgay(*args):
-    """First rule of fight club"""
-    return await milk_bot.say('\nI M G A Y\nM\nG\nA\nY')
+    """First rule of Fight Club"""
+    return await milk_bot.say('\nI  M  G  A  Y\nM\nG\nA\nY')
 
 
 @milk_bot.command(name='8ball')
