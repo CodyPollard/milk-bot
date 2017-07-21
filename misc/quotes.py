@@ -39,7 +39,9 @@ def print_quote():
     # Used by main.py to display a quote and increments call_count by 1
     rand_quote = get_random()
     db.milk_quotes.update_one({'_id': rand_quote['_id']}, {'$inc': {'call_count': 1}}, upsert=False)
-    t = db.milk_quotes.find({'_id': rand_quote['_id']})
+    t = db.milk_quotes.find_one({'_id': rand_quote['_id']})
+    print('End of print_quote')
+    print(t['_id'])
     return t
 
 
@@ -58,18 +60,21 @@ def validate_quote(msg):
         raise ValidationError('Please use quotation marks when adding a quote.')
 
 
+# Accepts message after validation to add to collection
 def add_quote(msg):
-    # Accepts message after validation to add to collection
     Quote(msg).to_mongo()
 
 
+# Updates total count of quotes called
 def get_call_count_total():
     call_total = 0
-    for i in range(0,db.milk_quotes.find().count()-1):
+    for i in range(0,db.milk_quotes.find().count()):
         temp = db.milk_quotes.find()[i]
         call_total = call_total+int(temp['call_count'])
     return call_total
 
+
+# Used to convert an old quotes.txt file to the new DB
 def convert_txt():
     with open('quotes.txt', 'r+') as f:
         for line in f:
@@ -77,4 +82,4 @@ def convert_txt():
             add_quote(n)
 
 if __name__ == "__main__":
-    convert_txt()
+    print(get_call_count_total())
