@@ -3,7 +3,6 @@ from misc import misc, quotes
 import random, secrets, time
 
 milk_bot = Bot(command_prefix="!")
-quoteList = quotes.quote_list
 eight = misc.eightball
 
 @milk_bot.event
