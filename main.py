@@ -66,5 +66,11 @@ async def eightball(*args):
     """Ask it a question"""
     return await milk_bot.say(random.choice(eight))
 
+@milk_bot.command()
+async def convert(*args):
+    """First rule of Fight Club"""
+    quotes.convert_txt()
+    return await milk_bot.say('All done')
+
 # Start the bot
 milk_bot.run(secrets.token_id)
