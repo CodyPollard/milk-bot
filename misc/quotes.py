@@ -39,7 +39,8 @@ def print_quote():
     # Used by main.py to display a quote and increments call_count by 1
     rand_quote = get_random()
     db.milk_quotes.update_one({'_id': rand_quote['_id']}, {'$inc': {'call_count': 1}}, upsert=False)
-    return rand_quote
+    t = db.milk_quotes.find({'_id': rand_quote['_id']})
+    return t
 
 
 # Validate that the given quote has quotation marks and an author
