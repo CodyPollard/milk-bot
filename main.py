@@ -50,7 +50,7 @@ async def quote(ctx, *args):
     try:
         msg = ctx.message.content
         call_total = quotes.get_call_count_total()
-        if '!add' in msg.split(' ')[-1]:  # Print a random quote if no author is given
+        if '!quote' in msg.split(' ')[-1]:  # Print a random quote if no author is given
             q = quotes.print_quote()
             formatted = '{0:.3g}'.format(q['call_count'] / call_total * 100)
             return await milk_bot.say('"{}"{} \nThis quote has been used {} times accounting for'
