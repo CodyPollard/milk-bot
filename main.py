@@ -41,12 +41,30 @@ async def add(ctx, *args):
     try:
         quotes.validate_quote(msg)
         return await milk_bot.say('Quote successfuly added.')
-    except misc.ValidationError as exception:
+    except quotes.ValidationError as exception:
         return await milk_bot.say(exception)
 
-@milk_bot.command()
-async def quote(*args):
+@milk_bot.command(pass_context=True)
+async def quote(ctx, *args):
     """Displays a random quote from quotes.txt"""
+    try:
+        msg = ctx.message.content
+        call_total = quotes.get_call_count_total()
+        if '!add' in msg.split(' ')[-1]:  # Print a random quote if no author is given
+            q = quotes.print_quote()
+            formatted = '{0:.3g}'.format(q['call_count'] / call_total * 100)
+            return await milk_bot.say('"{}"{} \nThis quote has been used {} times accounting for'
+                                      ' {}% of total usage.'.format(q['msg'], q['author'], q['call_count'], formatted))
+        else:  # Print a random quote by the given author
+            q = quotes.get_author_quote(msg.split(' ')[1])
+            formatted = '{0:.3g}'.format(q['call_count'] / call_total * 100)
+            return await milk_bot.say('"{}"{} \nThis quote has been used {} times accounting for'
+                                      ' {}% of total usage.'.format(q['msg'], q['author'], q['call_count'], formatted))
+    except quotes.ValidationError as exception:
+        return await milk_bot.say(exception)
+
+
+
     q = quotes.print_quote()
     call_total = quotes.get_call_count_total()
     formatted = '{0:.3g}'.format(q['call_count']/call_total*100)
@@ -55,10 +73,12 @@ async def quote(*args):
 
 # Other Commands #
 
-@milk_bot.command()
-async def imgay(*args):
+@milk_bot.command(pass_context=True)
+async def imgay(ctx, *args):
     """First rule of Fight Club"""
-    return await milk_bot.say('\nI  M  G  A  Y\nM\nG\nA\nY')
+    serv = ctx.server
+    n = serv.name
+    return await milk_bot.say(n)
 
 
 @milk_bot.command(name='8ball')

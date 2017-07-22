@@ -5,5 +5,6 @@ eightball = ['It is certain','It is decidedly so','Without a doubt','Yes definit
                   'Better not tell you now','Cannot predict now','Concentrate and ask again',"Don't count on it",
                   'My reply is no','My sources say no','Outlook not so good','Very doubtful']
 
+
 if __name__ == "__main__":
     pass
