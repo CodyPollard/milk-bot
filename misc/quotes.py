@@ -35,7 +35,7 @@ class DBQuote(object):
             self.quote = None
             print('No ID passed')
         else:
-            quote = db.milk_quotes.find_one({'_id': _id})
+            self.quote = db.milk_quotes.find_one({'_id': _id})
             print('ID was passed')
 
     # Returns a random quote from the collection milk_quotes. author is an optional argument and if given
