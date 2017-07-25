@@ -48,28 +48,22 @@ async def add(ctx, *args):
 async def quote(ctx, *args):
     """Displays a random quote from quotes.txt"""
     try:
+        q = quotes.DBQuote()
         msg = ctx.message.content
         call_total = quotes.get_call_count_total()
         if '!quote' in msg.split(' ')[-1]:  # Print a random quote if no author is given
-            q = quotes.print_quote()
-            formatted = '{0:.3g}'.format(q['call_count'] / call_total * 100)
+            q.get_quote()
+            formatted = '{0:.3g}'.format(q.quote['call_count'] / call_total * 100)
             return await milk_bot.say('"{}"{} \nThis quote has been used {} times accounting for'
-                                      ' {}% of total usage.'.format(q['msg'], q['author'], q['call_count'], formatted))
+                                      ' {}% of total usage.'.format(q.quote['msg'], q.quote['author'], q.quote['call_count'], formatted))
         else:  # Print a random quote by the given author
-            q = quotes.get_author_quote(msg.split(' ')[1])
-            formatted = '{0:.3g}'.format(q['call_count'] / call_total * 100)
+            q.get_quote(msg.split(' ')[1])
+            formatted = '{0:.3g}'.format(q.quote['call_count'] / call_total * 100)
             return await milk_bot.say('"{}"{} \nThis quote has been used {} times accounting for'
-                                      ' {}% of total usage.'.format(q['msg'], q['author'], q['call_count'], formatted))
+                                      ' {}% of total usage.'.format(q.quote['msg'], q.quote['author'], q.quote['call_count'], formatted))
     except quotes.ValidationError as exception:
         return await milk_bot.say(exception)
 
-
-
-    q = quotes.print_quote()
-    call_total = quotes.get_call_count_total()
-    formatted = '{0:.3g}'.format(q['call_count']/call_total*100)
-    return await milk_bot.say('"{}"{} \nThis quote has been used {} times accounting for'
-                              ' {}% of total usage.'.format(q['msg'], q['author'], q['call_count'], formatted))
 
 # Other Commands #
 

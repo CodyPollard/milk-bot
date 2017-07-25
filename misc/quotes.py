@@ -1,5 +1,4 @@
 import re
-
 from pymongo import MongoClient
 import random
 
@@ -8,12 +7,13 @@ db = client.quotes
 collection = db.milk_quotes
 
 
-# Quotes #
+# AddQuotes #
 class ValidationError(Exception):
     pass
 
 
-class Quote(object):
+# AddQuote handles the user input for a quote before it is added to a database
+class AddQuote(object):
     def __init__(self, ctx):
         temp = ctx.split('"')
         self.msg = temp[1]
@@ -27,42 +27,47 @@ class Quote(object):
         collection.insert(self.to_dict())
 
 
-# Used by main.py to get a random quote for the !quote command #
-# Gets the max size of the collection -1 and picks a quote
-# at that index for use
-def get_random_quote():
-    collection_max = int(db.milk_quotes.find().count())-1
-    rand_index = random.randint(0, collection_max)
-    return db.milk_quotes.find()[rand_index]
+# DBQuote handles the usage of a quote after it has been added to a database by AddQuote
+class DBQuote(object):
 
-def get_author_quote(a):
-    sub_string = a[:4]
-    regx = '.*'+sub_string+'.*'
-    all = db.milk_quotes.find({'author': {'$regex': regx, '$options': 'i'}})
-    quote_list = []
-    for i in all:
-        quote_list.append(i)
+    def __init__(self, _id=None):
+        if _id is None:
+            self.quote = None
+            print('No ID passed')
+        else:
+            quote = db.milk_quotes.find_one({'_id': _id})
+            print('ID was passed')
 
-    if not quote_list:
-        raise ValidationError("Invalid Author")
-    else:
-        rand_quote = random.choice(quote_list)
-        update_call_count(rand_quote)
-        return rand_quote
+    # Returns a random quote from the collection milk_quotes. author is an optional argument and if given
+    # will return a random quote from the given author
+    def get_quote(self, author=None):
+        if author is None:
+            # Find random quote from entire collection
+            collection_max = int(db.milk_quotes.find().count()) - 1
+            rand_index = random.randint(0, collection_max)
+            self.quote = db.milk_quotes.find()[rand_index]
+            self.update_call_count()
+            return self.quote
+        else:
+            # Find random quote by a given author
+            sub_string = author[:4]
+            regx = '.*' + sub_string + '.*'
+            all_quotes = db.milk_quotes.find({'author': {'$regex': regx, '$options': 'i'}})
+            quote_list = []
+            for i in all_quotes:
+                quote_list.append(i)
 
+            # Check if there are any quotes found for the author and return a random one
+            if not quote_list:
+                raise ValidationError("Invalid Author")
+            else:
+                self.quote = random.choice(quote_list)
+                self.update_call_count()
+                return self.quote
 
-def print_quote():
-    # Used by main.py to display a quote and increments call_count by 1
-    rand_quote = get_random_quote()
-    update_call_count(rand_quote)
-    t = db.milk_quotes.find_one({'_id': rand_quote['_id']})
-    print('End of print_quote')
-    print(t['_id'])
-    return t
-
-
-def update_call_count(q):
-    db.milk_quotes.update_one({'_id': q['_id']}, {'$inc': {'call_count': 1}}, upsert=False)
+    def update_call_count(self):
+        db.milk_quotes.update_one({'_id': self.quote['_id']}, {'$inc': {'call_count': 1}}, upsert=False)
+        self.quote = db.milk_quotes.find_one({'_id': self.quote['_id']})
 
 
 # Validate that the given quote has quotation marks and an author
@@ -82,7 +87,7 @@ def validate_quote(msg):
 
 # Accepts message after validation to add to collection
 def add_quote(msg):
-    Quote(msg).to_mongo()
+    AddQuote(msg).to_mongo()
 
 
 # Updates total count of quotes called
@@ -129,4 +134,7 @@ def get_unique_authors():
     return unique_authors
 
 if __name__ == "__main__":
-    print(get_author_quote('tolstoy'))
+    d = DBQuote()
+    d.get_quote('cody')
+    print(d.quote['msg'])
+    print(d.quote['call_count'])
