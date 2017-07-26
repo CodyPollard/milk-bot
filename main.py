@@ -36,7 +36,10 @@ async def templink(*args):
 
 @milk_bot.command(pass_context=True)
 async def add(ctx, *args):
-    """Adds the message content to quotes.txt if formatted correctly"""
+    """
+    Adds the message content to the quotes db
+    !add "[quote]" -[author]
+    """
     msg = ctx.message.content
     try:
         quotes.validate_quote(msg)
@@ -66,14 +69,6 @@ async def quote(ctx, *args):
 
 
 # Other Commands #
-
-@milk_bot.command(pass_context=True)
-async def imgay(ctx, *args):
-    """First rule of Fight Club"""
-    serv = ctx.server
-    n = serv.name
-    return await milk_bot.say(n)
-
 
 @milk_bot.command(name='8ball')
 async def eightball(*args):
