@@ -1,7 +1,12 @@
 from discord.ext.commands import Bot
 from misc import misc, quotes
 from CoC import player
-import random, secrets, time
+import random, secrets
+from pymongo import MongoClient
+
+# DB info
+client = MongoClient()
+db = client.coc
 
 milk_bot = Bot(command_prefix="!")
 eight = misc.eightball
@@ -84,19 +89,41 @@ async def eightball(*args):
 async def coc(ctx, *args):
     msg = ctx.message.content
     user = str(ctx.message.author)
+    # Runs if !coc newgame is given
     if 'newgame' in msg.split(' ')[-1]:
+        # Check to see if the user already has a profile
+        if db.players.find({'name': user}).count() is 0:
+            pass
+        else:
+            return await milk_bot.say('Your profile already exists. Type !coc help for more info.')
+        # Ask the user to select a race
         await milk_bot.say('Please select a race: Human, Orc, Dwarf, or Nightelf')
-        race = await milk_bot.wait_for_message(author=user, timeout=20)
+        race = await milk_bot.wait_for_message(author=ctx.message.author, timeout=10)
         if race is None:
             return await milk_bot.say('Race selection timed out, please try !coc newgame again when you are ready.')
-        player.new_game(user, race)
+        player.new_game(user, str(race.content).lower())
         return await milk_bot.say('Your profile has been created, please see !coc help for more info')
+    # Runs if !coc delete is given
+    elif 'delete' in msg.split(' ')[-1]:
+        if db.players.find({'name': user}).count() is 0:
+            return await milk_bot.say('Your profile does not exist. Type !coc newgame to create one.')
+        else:
+            await milk_bot.say('Are you sure you want to delete your profile? y/n')
+            confirmation = await milk_bot.wait_for_message(author=ctx.message.author, timeout=20)
+            if str(confirmation.content).lower() == 'y':
+                db.players.delete_one({'name': user})
+                return await milk_bot.say('Profile deleted.')
+            else:
+                return await milk_bot.say('You live to fight another day.')
+    # Runs if !coc help is given
+    elif 'help' in msg.split(' ')[-1]:
+        return await milk_bot.say('Valid commands include: \n'
+                           "newgame : Creates a new profile if you don't have one already.\n"
+                           'delete : Deletes your profile if one exists.\n'
+                           'help : Displays this list.')
+    # Runs if none of the above commands are given
     else:
         return await milk_bot.say('Invalid command. Please see !coc help for more info')
-
-
-
-
 
 # Start the bot
 milk_bot.run(secrets.token_id)
