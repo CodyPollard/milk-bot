@@ -13,7 +13,7 @@ def new_game(user, race):
 class Player(object):
 
     def __init__(self, user, race=None):
-        if db.players.find({'user': user}).count() is 0:
+        if db.players.find({'name': user}).count() is 0:
             print('This user doesnt exist')
             # Initialize the player
             self.name = user
@@ -26,17 +26,29 @@ class Player(object):
             self.spy_power, self.sentry_power = 25, 25
             # Create user's castle
             Castle(user)
-            print(self.__dict__)
+            self.update_stats()
             db.players.insert(self.__dict__)
-
         else:
-            print('This user exists')
-
+            p = db.players.find_one({'name': user})
+            self.name = user
+            self.race = p['race']
+            self.army = p['army']
+            self.espionage = p['espionage']
+            self.attack_power = p['attack_power']
+            self.defense_power = p['defense_power']
+            self.spy_power = p['spy_power']
+            self.sentry_power = p['sentry_power']
 
     def update_stats(self):
-        pass
+        r = Race(self.race)
+        self.attack_power = self.attack_power*r.attack_mod
+        self.defense_power = self.defense_power*r.defense_mod
+        self.spy_power = self.spy_power*r.spy_mod
+        self.sentry_power = self.sentry_power*r.sentry_mod
+        print(self.attack_power, self.defense_power, self.spy_power, self.sentry_power)
 
-
+    def get_stats(self):
+        return self.__dict__
 
 class Castle(object):
 
@@ -81,4 +93,4 @@ def set_race(r):
 
 
 if __name__ == '__main__':
-    Player('test', 'orc')
+    Player('blah', 'orc')

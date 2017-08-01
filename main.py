@@ -115,12 +115,20 @@ async def coc(ctx, *args):
                 return await milk_bot.say('Profile deleted.')
             else:
                 return await milk_bot.say('You live to fight another day.')
+    # Runs if !coc myinfo is given
+    elif 'myinfo' in msg.split(' ')[-1]:
+        if db.players.find({'name': user}).count() is 0:
+            return await milk_bot.say('Your profile does not exist. Type !coc newgame to create one.')
+        else:
+            p = player.Player(user)
+            return await milk_bot.send_message(ctx.message.author, p.get_stats())
     # Runs if !coc help is given
     elif 'help' in msg.split(' ')[-1]:
         return await milk_bot.say('Valid commands include: \n'
-                           "newgame : Creates a new profile if you don't have one already.\n"
-                           'delete : Deletes your profile if one exists.\n'
-                           'help : Displays this list.')
+                                    "newgame : Creates a new profile if you don't have one already.\n"
+                                    'delete : Deletes your profile if one exists.\n'
+                                    'myinfo : Sends your current stats in a private message.\n'
+                                    'help : Displays this list.')
     # Runs if none of the above commands are given
     else:
         return await milk_bot.say('Invalid command. Please see !coc help for more info')
