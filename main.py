@@ -1,5 +1,6 @@
 from discord.ext.commands import Bot
 from misc import misc, quotes
+from CoC import player
 import random, secrets, time
 
 milk_bot = Bot(command_prefix="!")
@@ -74,6 +75,28 @@ async def quote(ctx, *args):
 async def eightball(*args):
     """Ask it a question"""
     return await milk_bot.say(random.choice(eight))
+
+
+
+# COC COMMANDS #
+
+@milk_bot.command(pass_context=True)
+async def coc(ctx, *args):
+    msg = ctx.message.content
+    user = str(ctx.message.author)
+    if 'newgame' in msg.split(' ')[-1]:
+        await milk_bot.say('Please select a race: Human, Orc, Dwarf, or Nightelf')
+        race = await milk_bot.wait_for_message(author=user, timeout=20)
+        if race is None:
+            return await milk_bot.say('Race selection timed out, please try !coc newgame again when you are ready.')
+        player.new_game(user, race)
+        return await milk_bot.say('Your profile has been created, please see !coc help for more info')
+    else:
+        return await milk_bot.say('Invalid command. Please see !coc help for more info')
+
+
+
+
 
 # Start the bot
 milk_bot.run(secrets.token_id)
