@@ -10,7 +10,7 @@ to the !templink, !info, and !ra command.
 !ra - Either create the role 'Bot Tester' or rename the role for whichever role you would like to grant users.  
 
 # Chaos commands
-!chaos: 
+!chaos:   
 newgame - Starts a new profile and asks you to pick a race.  
 delete - Deletes all entries related to your existing profile.  
 top5 - Displays the names of the five top ranked players.  
