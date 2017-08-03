@@ -10,9 +10,11 @@ to the !templink, !info, and !ra command.
 !ra - Either create the role 'Bot Tester' or rename the role for whichever role you would like to grant users.  
 
 # Chaos commands
-!chaos: newgame - Starts a new profile and asks you to pick a race.
-        delete - Deletes all entries related to your existing profile.
-        top5 - Displays the names of the five top ranked players.
+!chaos: 
+newgame - Starts a new profile and asks you to pick a race.  
+delete - Deletes all entries related to your existing profile.  
+top5 - Displays the names of the five top ranked players.  
+help - Links to milk-bot GitHub.
         
 !mystats: Messages you your current stats.  
           castle - Messages you your castle's stats.  
