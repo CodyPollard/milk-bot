@@ -56,7 +56,10 @@ class Castle(object):
             db.castles.insert_one(self.__dict__)
             print('Castle did not exist but has been created')
         else:
-            print(db.castles.find_one({'owner': user}))
+            c = db.castles.find_one({'owner': user})
+            self.upgrade_tier = c['upgrade_tier']
+            self.defense = c['defense']
+            self.capacity = c['capacity']
 
 
 class Army(object):

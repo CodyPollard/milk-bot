@@ -133,6 +133,28 @@ async def mystats(ctx, *args):
     # Runs if !chaos myinfo is given
     if db.players.find({'name': user}).count() is 0:
         return await milk_bot.say('Your profile does not exist. Type !chaos newgame to create one.')
+    elif 'army' in msg.split(' ')[-1]:
+        a = player.Army(user)
+        return await milk_bot.send_message(ctx.message.author, '- Soldiers -\n'
+                                                               'Footmen: {}\n'
+                                                               'Swordsmen: {}\n'
+                                                               'Lancers: {}\n'
+                                                               'Knights: {}\n'
+                                                               'Royal Guard: {}\n'
+                                                               '- Covert -\n'
+                                                               'Spies: {}\n'
+                                                               'Sentries: {}'.format(a.s_footman, a.s_swordsman,
+                                                                                     a.s_lancer, a.s_knight,
+                                                                                     a.s_royal_guard, a.c_spy,
+                                                                                     a.c_sentry))
+    elif 'castle' in msg.split(' ')[-1]:
+        c = player.Castle(user)
+        return await milk_bot.send_message(ctx.message.author, 'Current Upgrade Tier: {}\n'
+                                                               'Defense: {}\n'
+                                                               'Unit Capacity: {}\n'
+                                                               '-----\n'
+                                                               'Next Upgrade At: xyz Gold'.format(c.upgrade_tier,
+                                                                                                  c.defense, c.capacity))
     else:
         p = player.Player(user)
         return await milk_bot.send_message(ctx.message.author, 'Race: {}\n'
@@ -141,11 +163,61 @@ async def mystats(ctx, *args):
                                                                'Defense Power: {}\n'
                                                                'Spy Power: {}\n'
                                                                'Sentry Power: {}'.format(p.race, p.recruit_rate,
-                                                                                         p.attack_power,
-                                                                                         p.defense_power,
-                                                                                         p.spy_power,
-                                                                                         p.sentry_power))
+                                                                                         p.attack_power, p.defense_power,
+                                                                                         p.spy_power, p.sentry_power))
 
+@milk_bot.command(pass_context=True)
+async def raceinfo(ctx, *args):
+    msg = ctx.message.content
+    user = str(ctx.message.author)
+    if 'human' in msg.split(' ')[-1]:
+        r = player.Race('human')
+        return await milk_bot.send_message(ctx.message.author, '- Human -\n'
+                                                           'Attack Modifier: {}%\n'
+                                                           'Defense Modifier: {}%\n'
+                                                           'Recruitment Modifier: {}%\n'
+                                                           'Spy Modifier: {}%\n'
+                                                           'Sentry Modifier: {}%'.format(r.attack_mod*100, r.defense_mod*100,
+                                                                                        r.recruitment_mod*100, r.spy_mod*100,
+                                                                                        r.sentry_mod*100))
+    elif 'orc' in msg.split(' ')[-1]:
+        r = player.Race('orc')
+        return await milk_bot.send_message(ctx.message.author, '- Orc -\n'
+                                                               'Attack Modifier: {}%\n'
+                                                               'Defense Modifier: {}%\n'
+                                                               'Recruitment Modifier: {}%\n'
+                                                               'Spy Modifier: {}%\n'
+                                                               'Sentry Modifier: {}%'.format(r.attack_mod * 100,
+                                                                                             r.defense_mod * 100,
+                                                                                             r.recruitment_mod * 100,
+                                                                                             r.spy_mod * 100,
+                                                                                             r.sentry_mod * 100))
+    elif 'dwarf' in msg.split(' ')[-1]:
+        r = player.Race('dwarf')
+        return await milk_bot.send_message(ctx.message.author, '- Dwarf -\n'
+                                                               'Attack Modifier: {}%\n'
+                                                               'Defense Modifier: {}%\n'
+                                                               'Recruitment Modifier: {}%\n'
+                                                               'Spy Modifier: {}%\n'
+                                                               'Sentry Modifier: {}%'.format(r.attack_mod * 100,
+                                                                                             r.defense_mod * 100,
+                                                                                             r.recruitment_mod * 100,
+                                                                                             r.spy_mod * 100,
+                                                                                             r.sentry_mod * 100))
+    elif 'nightelf' in msg.split(' ')[-1]:
+        r = player.Race('nightelf')
+        return await milk_bot.send_message(ctx.message.author, '- Nightelf -\n'
+                                                               'Attack Modifier: {}%\n'
+                                                               'Defense Modifier: {}%\n'
+                                                               'Recruitment Modifier: {}%\n'
+                                                               'Spy Modifier: {}%\n'
+                                                               'Sentry Modifier: {}%'.format(r.attack_mod * 100,
+                                                                                             r.defense_mod * 100,
+                                                                                             r.recruitment_mod * 100,
+                                                                                             r.spy_mod * 100,
+                                                                                             r.sentry_mod * 100))
+    else:
+        return await milk_bot.send_message(ctx.message.author, 'Try !raceinfo [race] to show their stats.')
 
 # Start the bot
 milk_bot.run(secrets.token_id)
