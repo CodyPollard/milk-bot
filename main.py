@@ -1,7 +1,7 @@
 from discord.ext.commands import Bot
 from misc import misc, quotes
 from CoC import player
-import random, secrets, sys
+import random, secrets, os
 from pymongo import MongoClient
 
 # DB info
@@ -38,6 +38,7 @@ async def templink(*args):
     """Displays a join link for the Discord server"""
     return await milk_bot.say("Temp link: https://discord.gg/5tnDXvZ")
 
+
 # Quote Commands #
 
 @milk_bot.command(pass_context=True)
@@ -52,6 +53,7 @@ async def add(ctx, *args):
         return await milk_bot.say('Quote successfuly added.')
     except quotes.ValidationError as exception:
         return await milk_bot.say(exception)
+
 
 @milk_bot.command(pass_context=True)
 async def quote(ctx, *args):
@@ -82,9 +84,36 @@ async def eightball(*args):
     return await milk_bot.say(random.choice(eight))
 
 
+@milk_bot.command(pass_context=True)
+async def slist(ctx, *args):
+    """
+    Shopping list for logistics trips to empire
+    !slist - Displays the full shopping list
+    !slist [item] - Adds given item to the list
+    !slist clear - Clears the shopping list
+    """
+    msg = ctx.message.content
+    if msg == '!slist':
+        s = ''
+        try:
+            with open('shoppinglist.txt', 'r') as f:
+                temp = f.read().splitlines()
+                for i in temp:
+                    s +=(i+'\n')
+            return await milk_bot.say(s)
+        except FileNotFoundError:
+            return await milk_bot.say('File does not exist. Use !slist [item] to add to a new list.')
+    elif msg.split(' ')[1] == 'clear':
+        os.remove('shoppinglist.txt')
+        return await milk_bot.say('Shopping list cleared.')
+    else:
+        n = msg.split(' ', 1)[1]
+        misc.write_shopping_list(n)
+        return await milk_bot.say('Succesfully added {} to the shopping list.\n'
+                                  'Use !slist to view full list'.format(n))
+
 
 # COC COMMANDS #
-
 @milk_bot.command(pass_context=True)
 async def chaos(ctx, *args):
     msg = ctx.message.content
