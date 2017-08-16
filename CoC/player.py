@@ -31,7 +31,6 @@ class Player(object):
             self.recruit_rate = p['recruit_rate']
             self.update_stats()
 
-
     def update_stats(self):
         r = Race(self.race)
         a = Army(self.name)
@@ -43,6 +42,10 @@ class Player(object):
 
     def get_stats(self):
         return self.__dict__
+
+    def recruit_loop(self):
+        Army(self.name).recruit_footman(self.recruit_rate)
+
 
 
 class Castle(object):
@@ -79,6 +82,7 @@ class Army(object):
             db.armies.insert_one(self.__dict__)
         else:
             a = db.armies.find_one({'owner': user})
+            self.a_object = a
             # Soldiers
             self.s_footman = a['s_footman']
             self.s_swordsman = a['s_swordsman']
@@ -88,6 +92,9 @@ class Army(object):
             # Covert Units
             self.c_spy = a['c_spy']
             self.c_sentry = a['c_sentry']
+
+    def update_army(self):
+        self.a_object = db.armies.find_one({'owner': self.a_object['owner']})
 
     def get_soldier_power(self):
         # Get each unit count and multiply by unit strength from unitinfo
@@ -110,6 +117,12 @@ class Army(object):
             if str(i) == 'c_sentry':
                 total_power += self.__dict__[i]
         return total_power
+
+    def recruit_footman(self, inc):
+        # Increments the user's footman count based on their recruitment_rate in Player
+        db.armies.update_one({'owner': self.a_object['owner']}, {'$inc': {'s_footman': inc}}, upsert=False)
+        self.update_army()
+
 
 # Used for initializing the race_col collection #
 class Race(object):
@@ -137,5 +150,5 @@ def set_race(r):
 
 
 if __name__ == '__main__':
-    # Player('anutha', 'orc')
-    p = Player('again', 'nightelf')
+    # DO THREADING SHIT HERE? #
+    p = Player('onemore', 'human')

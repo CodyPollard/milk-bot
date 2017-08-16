@@ -1,6 +1,6 @@
 from discord.ext.commands import Bot
 from misc import misc, quotes, crypto
-from CoC import player
+from CoC import player, coc
 import random, secrets, os
 from pymongo import MongoClient
 
@@ -14,6 +14,7 @@ eight = misc.eightball
 @milk_bot.event
 async def on_ready():
     print("Client logged in")
+    coc.recruitment_cycle()
 
 
 # Meta Commands #
