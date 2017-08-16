@@ -95,13 +95,6 @@ async def summary(ctx, *args):
 
 
 @milk_bot.command(pass_context=True)
-async def btc(ctx, *args):
-    """Coming Soon"""
-    msg = ctx.message.content
-    return await milk_bot.say('Conversion at current rate: ${}'.format(crypto.btc_conversion(int(msg))))
-
-
-@milk_bot.command(pass_context=True)
 async def slist(ctx, *args):
     """
     Shopping list for logistics trips to empire
