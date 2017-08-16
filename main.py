@@ -139,10 +139,12 @@ async def chaos(ctx, *args):
         race = await milk_bot.wait_for_message(author=ctx.message.author, timeout=10)
         if race is None:
             return await milk_bot.say('Race selection timed out, please try !chaos newgame again when you are ready.')
-        else:
-            print(user, str(race.content).lower())
+        elif str(race.content).lower() in ('human', 'orc', 'dwarf', 'nightelf'):
             player.Player(user, str(race.content))
             return await milk_bot.say('Your profile has been created, please see !chaos help for more info')
+        else:
+            return await milk_bot.say('Your selected race was not one of the four listed above. Please create a newgame'
+                                      'to try again.')
     # Runs if !chaos delete is given
     elif 'delete' in msg.split(' ')[-1]:
         if db.players.find({'name': user}).count() is 0:
