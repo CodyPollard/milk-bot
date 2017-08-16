@@ -1,5 +1,5 @@
 from discord.ext.commands import Bot
-from misc import misc, quotes
+from misc import misc, quotes, crypto
 from CoC import player
 import random, secrets, os
 from pymongo import MongoClient
@@ -82,6 +82,23 @@ async def quote(ctx, *args):
 async def eightball(*args):
     """Ask it a question"""
     return await milk_bot.say(random.choice(eight))
+
+
+@milk_bot.command(pass_context=True)
+async def summary(ctx, *args):
+    """Coming Soon"""
+    market = ctx.message.content.split(' ')
+    data = crypto.Market(market[1]).get_market_summary()
+    return await milk_bot.say('USDT-BTC Summary\n'
+                              'Last Sale: ${}\n'
+                              'Daily Delta: {:+.2f}%'.format(data[0], data[1]))
+
+
+@milk_bot.command(pass_context=True)
+async def btc(ctx, *args):
+    """Coming Soon"""
+    msg = ctx.message.content
+    return await milk_bot.say('Conversion at current rate: ${}'.format(crypto.btc_conversion(int(msg))))
 
 
 @milk_bot.command(pass_context=True)
