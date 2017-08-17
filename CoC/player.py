@@ -254,4 +254,4 @@ def set_race(r):
 
 if __name__ == '__main__':
     p = Player('onemore', 'human')
-    p.get_total_score()
+    print(p.get_total_score())
