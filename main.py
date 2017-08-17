@@ -192,16 +192,28 @@ async def mystats(ctx, *args):
         a = player.Army(user)
         return await milk_bot.send_message(ctx.message.author, '- Soldiers -\n'
                                                                'Footmen: {}\n'
-                                                               'Swordsmen: {}\n'
-                                                               'Lancers: {}\n'
-                                                               'Knights: {}\n'
-                                                               'Royal Guard: {}\n'
-                                                               '- Covert -\n'
                                                                'Spies: {}\n'
-                                                               'Sentries: {}'.format(a.s_footman, a.s_swordsman,
-                                                                                     a.s_lancer, a.s_knight,
-                                                                                     a.s_royal_guard, a.c_spy,
-                                                                                     a.c_sentry))
+                                                               'Sentries: {}\n\n'
+                                                               '- Weapons -\n'
+                                                               'Short Swords: {}\n'
+                                                               'Flails: {}\n'
+                                                               'Halberds: {}\n'
+                                                               'Cavalry: {}\n-\n'
+                                                               'Kite Shields: {}\n'
+                                                               'Spears: {}\n'
+                                                               'Tower Shields: {}\n'
+                                                               'Full Armor: {}\n\n'
+                                                               '- Tools -\n'
+                                                               'Rope: {}\n'
+                                                               'Grappling Hooks: {}\n'
+                                                               'Short Bows: {}\n-\n'
+                                                               'Torches: {}\n'
+                                                               'Guard Dogs: {}\n'
+                                                               'Alarms: {}'.format(a.s_footman, a.c_spy, a.c_sentry,
+                                                                                   a.ow_short_sword, a.ow_flail, a.ow_halberd, a.ow_cavalry,
+                                                                                   a.dw_kite_shield, a.dw_spear, a.dw_tower_shield, a.dw_full_armor,
+                                                                                   a.st_rope, a.st_grapple_hook, a.st_short_bow,
+                                                                                   a.sen_torch, a.sen_guard_dog, a.sen_alarm))
     elif 'castle' in msg.split(' ')[-1]:
         c = player.Castle(user)
         return await milk_bot.send_message(ctx.message.author, 'Current Upgrade Tier: {}\n'

@@ -19,6 +19,7 @@ class Player(object):
             self.recruit_rate = 10
             self.attack_power, self.defense_power = 0, 0
             self.spy_power, self.sentry_power = 0, 0
+            self.gold = 500
             # Create user's castle and Army
             Castle(self.name)
             Army(self.name)
@@ -49,6 +50,7 @@ class Player(object):
 
     def recruit_loop(self):
         Army(self.name).recruit_footman(self.recruit_rate)
+        db.players.update_one({'owner': self.name}, {'$inc': {'gold': self.recruit_rate}}, upsert=False)
 
 
 class Castle(object):
@@ -129,7 +131,7 @@ class Army(object):
 
     def get_defensive_power(self):
         weapon_strength = self.get_defensive_weapons()[0]
-        total_power = weapon_strength * int(self.__dict__['s_footman'])
+        total_power = weapon_strength + int(self.__dict__['s_footman'])
         print('Total Power: ', total_power)
         return total_power
 
@@ -154,7 +156,7 @@ class Army(object):
 
     def get_offensive_power(self):
         weapon_strength = self.get_offensive_weapons()[0]
-        total_power = weapon_strength*int(self.__dict__['s_footman'])
+        total_power = weapon_strength+int(self.__dict__['s_footman'])
         print('Total Power: ', total_power)
         return total_power
 
@@ -178,8 +180,8 @@ class Army(object):
         return weapon_strength, weapon_durability
 
     def get_spy_power(self):
-        weapon_strength = self.get_offensive_weapons()[0]
-        total_power = weapon_strength*int(self.__dict__['c_spy'])
+        tool_strength = self.get_offensive_weapons()[0]
+        total_power = tool_strength+int(self.__dict__['c_spy'])
         print('Total Power: ', total_power)
         return total_power
 
@@ -200,8 +202,8 @@ class Army(object):
         return tool_strength, tool_durability
 
     def get_sentry_power(self):
-        weapon_strength = self.get_offensive_weapons()[0]
-        total_power = weapon_strength*int(self.__dict__['c_sentry'])
+        tool_strength = self.get_offensive_weapons()[0]
+        total_power = tool_strength+int(self.__dict__['c_sentry'])
         print('Total Power: ', total_power)
         return total_power
 
