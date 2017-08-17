@@ -1,4 +1,5 @@
 from pymongo import MongoClient
+from CoC import equipment_info
 
 # DB info
 client = MongoClient()
@@ -33,8 +34,8 @@ class Player(object):
     def update_stats(self):
         r = Race(self.race)
         a = Army(self.name)
-        self.attack_power = a.get_soldier_power()*r.attack_mod
-        self.defense_power = a.get_soldier_power()*r.defense_mod
+        self.attack_power = a.get_offensive_power()*r.attack_mod
+        self.defense_power = a.get_defensive_power()*r.defense_mod
         self.spy_power = a.get_spy_power()*r.spy_mod
         self.sentry_power = a.get_sentry_power()*r.sentry_mod
         self.recruit_rate *= r.recruitment_mod
@@ -45,7 +46,6 @@ class Player(object):
     def get_total_score(self):
         c = Castle(self.name)
         return (self.attack_power+self.defense_power+self.spy_power+self.sentry_power)*(float(c.upgrade_tier)*.25)*10
-
 
     def recruit_loop(self):
         Army(self.name).recruit_footman(self.recruit_rate)
@@ -79,9 +79,9 @@ class Army(object):
             self.c_spy = 25
             self.c_sentry = 25
             # Offensive Weapons
-            self.ow_short_sword = 0
+            self.ow_short_sword = 2
             self.ow_flail = 0
-            self.ow_halberd = 0
+            self.ow_halberd = 1
             self.ow_cavalry = 0
             # Defensive Weapons
             self.dw_kite_shield = 0
@@ -127,31 +127,102 @@ class Army(object):
     def update_army(self):
         self.a_object = db.armies.find_one({'owner': self.a_object['owner']})
 
-    def get_soldier_power(self):
-        # Get each unit count and multiply by unit strength from unitinfo
-        total_power = self.__dict__['s_footman']
-        print(total_power)
-        # for i in self.__dict__:
-        #     if str(i).startswith('s_'):
-        #         total_power += self.__dict__[i]
+    def get_defensive_power(self):
+        weapon_strength = self.get_defensive_weapons()[0]
+        total_power = weapon_strength * int(self.__dict__['s_footman'])
+        print('Total Power: ', total_power)
         return total_power
+
+    def get_defensive_weapons(self):
+        weapon_strength = 0
+        weapon_durability = 0
+        ks = equipment_info.KiteShield()
+        spear = equipment_info.Spear()
+        ts = equipment_info.TowerShield()
+        fa = equipment_info.FullArmor()
+        weapon_strength += int(self.__dict__['dw_kite_shield']) * ks.strength
+        weapon_strength += int(self.__dict__['dw_spear']) * spear.strength
+        weapon_strength += int(self.__dict__['dw_tower_shield']) * ts.strength
+        weapon_strength += int(self.__dict__['dw_full_armor']) * fa.strength
+        print(weapon_strength)
+        weapon_durability += int(self.__dict__['dw_kite_shield']) * ks.durability
+        weapon_durability += int(self.__dict__['dw_spear']) * spear.durability
+        weapon_durability += int(self.__dict__['dw_tower_shield']) * ts.durability
+        weapon_durability += int(self.__dict__['dw_full_armor']) * fa.durability
+        print(weapon_durability)
+        return weapon_strength, weapon_durability
+
+    def get_offensive_power(self):
+        weapon_strength = self.get_offensive_weapons()[0]
+        total_power = weapon_strength*int(self.__dict__['s_footman'])
+        print('Total Power: ', total_power)
+        return total_power
+
+    def get_offensive_weapons(self):
+        weapon_strength = 0
+        weapon_durability = 0
+        ss = equipment_info.ShortSword()
+        flail = equipment_info.Flail()
+        hal = equipment_info.Halberd()
+        cav = equipment_info.Cavalry()
+        weapon_strength += int(self.__dict__['ow_short_sword'])*ss.strength
+        weapon_strength += int(self.__dict__['ow_flail']) * flail.strength
+        weapon_strength += int(self.__dict__['ow_halberd']) * hal.strength
+        weapon_strength += int(self.__dict__['ow_cavalry']) * cav.strength
+        print(weapon_strength)
+        weapon_durability += int(self.__dict__['ow_short_sword']) * ss.durability
+        weapon_durability += int(self.__dict__['ow_flail']) * flail.durability
+        weapon_durability += int(self.__dict__['ow_halberd']) * hal.durability
+        weapon_durability += int(self.__dict__['ow_cavalry']) * cav.durability
+        print(weapon_durability)
+        return weapon_strength, weapon_durability
 
     def get_spy_power(self):
-        total_power = 0
-        for i in self.__dict__:
-            if str(i) == 'c_spy':
-                total_power += self.__dict__[i]
+        weapon_strength = self.get_offensive_weapons()[0]
+        total_power = weapon_strength*int(self.__dict__['s_footman'])
+        print('Total Power: ', total_power)
         return total_power
+
+    def get_spy_tools(self):
+        tool_strength = 0
+        tool_durability = 0
+        rope = equipment_info.Rope()
+        grap = equipment_info.GrappleHook()
+        sb = equipment_info.ShortBow()
+        tool_strength += int(self.__dict__['st_rope'])*rope.strength
+        tool_strength += int(self.__dict__['st_grapple_hook']) * grap.strength
+        tool_strength += int(self.__dict__['st_short_bow']) * sb.strength
+        print(tool_strength)
+        tool_durability += int(self.__dict__['st_rope']) * rope.durability
+        tool_durability += int(self.__dict__['st_grapple_hook']) * grap.durability
+        tool_durability += int(self.__dict__['st_short_bow']) * sb.durability
+        print(tool_durability)
+        return tool_strength, tool_durability
 
     def get_sentry_power(self):
-        total_power = 0
-        for i in self.__dict__:
-            if str(i) == 'c_sentry':
-                total_power += self.__dict__[i]
+        weapon_strength = self.get_offensive_weapons()[0]
+        total_power = weapon_strength*int(self.__dict__['s_footman'])
+        print('Total Power: ', total_power)
         return total_power
 
+    def get_sentry_tools(self):
+        tool_strength = 0
+        tool_durability = 0
+        torch = equipment_info.Torch()
+        gd = equipment_info.GuardDog()
+        alarm = equipment_info.Alarm()
+        tool_strength += int(self.__dict__['sen_torch'])*torch.strength
+        tool_strength += int(self.__dict__['sen_guard_dog']) * gd.strength
+        tool_strength += int(self.__dict__['sen_alarm']) * alarm.strength
+        print(tool_strength)
+        tool_durability += int(self.__dict__['sen_torch'])*torch.durability
+        tool_durability += int(self.__dict__['sen_guard_dog']) * gd.durability
+        tool_durability += int(self.__dict__['sen_alarm']) * alarm.durability
+        print(tool_durability)
+        return tool_strength, tool_durability
+
+    # Increments the user's footman count based on their recruitment_rate in Player
     def recruit_footman(self, inc):
-        # Increments the user's footman count based on their recruitment_rate in Player
         db.armies.update_one({'owner': self.a_object['owner']}, {'$inc': {'s_footman': inc}}, upsert=False)
         self.update_army()
 
@@ -182,6 +253,5 @@ def set_race(r):
 
 
 if __name__ == '__main__':
-    # DO THREADING SHIT HERE? #
     p = Player('onemore', 'human')
-    Army(p.name).get_soldier_power()
+    p.get_total_score()
