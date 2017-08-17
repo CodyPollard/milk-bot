@@ -140,7 +140,7 @@ async def chaos(ctx, *args):
         if race is None:
             return await milk_bot.say('Race selection timed out, please try !chaos newgame again when you are ready.')
         elif str(race.content).lower() in ('human', 'orc', 'dwarf', 'nightelf'):
-            player.Player(user, str(race.content))
+            player.Player(user, str(race.content).lower())
             return await milk_bot.say('Your profile has been created, please see !chaos help for more info')
         else:
             return await milk_bot.say('Your selected race was not one of the four listed above. Please create a newgame'
