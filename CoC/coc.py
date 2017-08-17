@@ -19,12 +19,13 @@ def recruitment_cycle():
     Timer(300, recruitment_cycle).start()
 
 
+# Leaderboards #
+
 def get_ranks():
     leaderboard = {}
     for document in db.players.find():
         p = player.Player(document['name'])
         leaderboard[p.name] = p.get_total_score()
-        #print(leaderboard[p.name])
     return OrderedDict(sorted(leaderboard.items(), key=lambda v: v[1], reverse=True))
 
 
