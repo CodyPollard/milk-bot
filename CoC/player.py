@@ -11,7 +11,6 @@ class Player(object):
 
     def __init__(self, user, race=None):
         if db.players.find({'name': user}).count() is 0:
-            print('This user doesnt exist')
             # Initialize the player
             self.name = user
             self.race = race
@@ -19,7 +18,7 @@ class Player(object):
             self.recruit_rate = 10
             self.attack_power, self.defense_power = 0, 0
             self.spy_power, self.sentry_power = 0, 0
-            self.gold = 500
+            self.gold = 1000
             # Create user's castle and Army
             Castle(self.name)
             Army(self.name)
@@ -36,8 +35,9 @@ class Player(object):
     def update_stats(self):
         r = Race(self.race)
         a = Army(self.name)
+        c = Castle(self.name)
         self.attack_power = a.get_offensive_power()*r.attack_mod
-        self.defense_power = a.get_defensive_power()*r.defense_mod
+        self.defense_power = (a.get_defensive_power()*r.defense_mod)+(c.defense*(a.get_defensive_power()*r.defense_mod))
         self.spy_power = a.get_spy_power()*r.spy_mod
         self.sentry_power = a.get_sentry_power()*r.sentry_mod
         self.recruit_rate *= r.recruitment_mod
@@ -51,7 +51,7 @@ class Player(object):
 
     def recruit_loop(self):
         Army(self.name).recruit_footman(self.recruit_rate)
-        db.players.update_one({'owner': self.name}, {'$inc': {'gold': self.recruit_rate}}, upsert=False)
+        db.players.update_one({'name': self.name}, {'$inc': {'gold': self.recruit_rate}}, upsert=False)
 
 
 class Castle(object):
@@ -60,15 +60,31 @@ class Castle(object):
         if db.castles.find({'owner': user}).count() is 0:
             self.owner = user
             self.upgrade_tier = 1
-            self.defense = 1000
+            self.defense = self.upgrade_tier/10
             self.capacity = 1000
+            self.up_cost = 750
             db.castles.insert_one(self.__dict__)
-            print('Castle did not exist but has been created')
         else:
-            c = db.castles.find_one({'owner': user})
-            self.upgrade_tier = c['upgrade_tier']
-            self.defense = c['defense']
-            self.capacity = c['capacity']
+            self.c = db.castles.find_one({'owner': user})
+            self.owner = self.c['owner']
+            self.upgrade_tier = self.c['upgrade_tier']
+            self.defense = self.c['defense']
+            self.capacity = self.c['capacity']
+            self.up_cost = self.c['up_cost']
+
+    def update_castle(self):
+        self.c = db.castles.find_one({'owner': self.c['owner']})
+
+    def upgrade_castle(self):
+        self.upgrade_tier += 1
+        self.defense = self.upgrade_tier/10
+        self.capacity = 1000+(1000*self.defense)
+        db.castles.update({'owner': self.owner}, {'owner': self.owner, 'upgrade_tier': self.upgrade_tier,
+                                                  'defense': self.defense, 'capacity': self.capacity,
+                                                  'up_cost': self.up_cost}, upsert=False)
+        db.players.update_one({'name': self.owner}, {'$inc': {'gold': -self.up_cost}}, upsert=False)
+        self.up_cost = 750 + (750 * self.defense)
+        self.update_castle()
 
 
 class Army(object):
@@ -84,10 +100,10 @@ class Army(object):
             # Offensive Weapons
             self.ow_short_sword = 2
             self.ow_flail = 0
-            self.ow_halberd = 1
+            self.ow_halberd = 0
             self.ow_cavalry = 0
             # Defensive Weapons
-            self.dw_kite_shield = 0
+            self.dw_kite_shield = 5
             self.dw_spear = 0
             self.dw_tower_shield = 0
             self.dw_full_armor = 0
@@ -133,7 +149,6 @@ class Army(object):
     def get_defensive_power(self):
         weapon_strength = self.get_defensive_weapons()[0]
         total_power = weapon_strength + int(self.__dict__['s_footman'])
-        print('Total Power: ', total_power)
         return total_power
 
     def get_defensive_weapons(self):
@@ -147,18 +162,15 @@ class Army(object):
         weapon_strength += int(self.__dict__['dw_spear']) * spear.strength
         weapon_strength += int(self.__dict__['dw_tower_shield']) * ts.strength
         weapon_strength += int(self.__dict__['dw_full_armor']) * fa.strength
-        print(weapon_strength)
         weapon_durability += int(self.__dict__['dw_kite_shield']) * ks.durability
         weapon_durability += int(self.__dict__['dw_spear']) * spear.durability
         weapon_durability += int(self.__dict__['dw_tower_shield']) * ts.durability
         weapon_durability += int(self.__dict__['dw_full_armor']) * fa.durability
-        print(weapon_durability)
         return weapon_strength, weapon_durability
 
     def get_offensive_power(self):
         weapon_strength = self.get_offensive_weapons()[0]
         total_power = weapon_strength+int(self.__dict__['s_footman'])
-        print('Total Power: ', total_power)
         return total_power
 
     def get_offensive_weapons(self):
@@ -172,18 +184,15 @@ class Army(object):
         weapon_strength += int(self.__dict__['ow_flail']) * flail.strength
         weapon_strength += int(self.__dict__['ow_halberd']) * hal.strength
         weapon_strength += int(self.__dict__['ow_cavalry']) * cav.strength
-        print(weapon_strength)
         weapon_durability += int(self.__dict__['ow_short_sword']) * ss.durability
         weapon_durability += int(self.__dict__['ow_flail']) * flail.durability
         weapon_durability += int(self.__dict__['ow_halberd']) * hal.durability
         weapon_durability += int(self.__dict__['ow_cavalry']) * cav.durability
-        print(weapon_durability)
         return weapon_strength, weapon_durability
 
     def get_spy_power(self):
         tool_strength = self.get_offensive_weapons()[0]
         total_power = tool_strength+int(self.__dict__['c_spy'])
-        print('Total Power: ', total_power)
         return total_power
 
     def get_spy_tools(self):
@@ -195,17 +204,14 @@ class Army(object):
         tool_strength += int(self.__dict__['st_rope'])*rope.strength
         tool_strength += int(self.__dict__['st_grapple_hook']) * grap.strength
         tool_strength += int(self.__dict__['st_short_bow']) * sb.strength
-        print(tool_strength)
         tool_durability += int(self.__dict__['st_rope']) * rope.durability
         tool_durability += int(self.__dict__['st_grapple_hook']) * grap.durability
         tool_durability += int(self.__dict__['st_short_bow']) * sb.durability
-        print(tool_durability)
         return tool_strength, tool_durability
 
     def get_sentry_power(self):
         tool_strength = self.get_offensive_weapons()[0]
         total_power = tool_strength+int(self.__dict__['c_sentry'])
-        print('Total Power: ', total_power)
         return total_power
 
     def get_sentry_tools(self):
@@ -217,11 +223,9 @@ class Army(object):
         tool_strength += int(self.__dict__['sen_torch'])*torch.strength
         tool_strength += int(self.__dict__['sen_guard_dog']) * gd.strength
         tool_strength += int(self.__dict__['sen_alarm']) * alarm.strength
-        print(tool_strength)
         tool_durability += int(self.__dict__['sen_torch'])*torch.durability
         tool_durability += int(self.__dict__['sen_guard_dog']) * gd.durability
         tool_durability += int(self.__dict__['sen_alarm']) * alarm.durability
-        print(tool_durability)
         return tool_strength, tool_durability
 
     # Increments the user's footman count based on their recruitment_rate in Player
@@ -257,4 +261,8 @@ def set_race(r):
 
 if __name__ == '__main__':
     p = Player('onemore', 'human')
-    print(p.get_total_score())
+    c = Castle(p.name)
+    print(c.__dict__)
+    print('Upgrading')
+    c.upgrade_castle()
+    p.recruit_loop()

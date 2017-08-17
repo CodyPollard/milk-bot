@@ -119,6 +119,9 @@ class Alarm(object):
     durability = 30
 
 
+class CastleUpgrades(object):
+    pass
+
 
 
 

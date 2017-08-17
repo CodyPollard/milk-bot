@@ -291,5 +291,26 @@ async def raceinfo(ctx, *args):
     else:
         return await milk_bot.send_message(ctx.message.author, 'Try !raceinfo [race] to show their stats.')
 
+
+@milk_bot.command(pass_context=True)
+async def castle(ctx, *args):
+    msg = ctx.message.content
+    user = str(ctx.message.author)
+    # Runs if !chaos myinfo is given
+    if db.players.find({'name': user}).count() is 0:
+        return await milk_bot.say('Your profile does not exist. Type !chaos newgame to create one.')
+    elif 'upgrade' in msg.split(' ')[-1]:
+        p = player.Player(user)
+        c = player.Castle(user)
+        if c.up_cost <= p.gold:
+            c.upgrade_castle()
+            return await milk_bot.say('Castle has been successfully upgraded to tier {}'.format(c.upgrade_tier))
+        else:
+            return await milk_bot.say('You do not have enough gold to upgrade your castle. You have {} gold but the '
+                                      'upgrade costs {}.'.format(p.gold, c.up_cost))
+    else:
+        c = player.Castle(user)
+        return await milk_bot.say('Your next castle upgrade costs: {} gold.'.format(c.up_cost))
+
 # Start the bot
 milk_bot.run(secrets.token_id)
