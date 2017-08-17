@@ -226,10 +226,11 @@ async def mystats(ctx, *args):
         p = player.Player(user)
         return await milk_bot.send_message(ctx.message.author, 'Race: {}\n'
                                                                'Recruitment Rate: {}\n'
+                                                               'Gold: {}'
                                                                'Attack Power: {}\n'
                                                                'Defense Power: {}\n'
                                                                'Spy Power: {}\n'
-                                                               'Sentry Power: {}'.format(p.race, p.recruit_rate,
+                                                               'Sentry Power: {}'.format(p.race, p.recruit_rate, p.gold,
                                                                                          p.attack_power, p.defense_power,
                                                                                          p.spy_power, p.sentry_power))
 
