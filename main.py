@@ -163,6 +163,7 @@ async def chaos(ctx, *args):
     elif 'help' in msg.split(' ')[-1]:
         return await milk_bot.say("For a full list of commands refer to the Bot's GitHub page.\n"
                                   "https://github.com/CodyPollard/milk-bot")
+    # Runs if !chaos top3 is given
     elif 'top3' in msg.split(' ')[-1]:
         leaders = coc.get_top_three()
         out = []
@@ -216,6 +217,7 @@ async def mystats(ctx, *args):
                                                                'Sentry Power: {}'.format(p.race, p.recruit_rate,
                                                                                          p.attack_power, p.defense_power,
                                                                                          p.spy_power, p.sentry_power))
+
 
 @milk_bot.command(pass_context=True)
 async def raceinfo(ctx, *args):

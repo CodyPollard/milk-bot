@@ -16,7 +16,8 @@ def recruitment_cycle():
         p = player.Player(document['name'])
         p.recruit_loop()
         print(p.attack_power)
-    Timer(10, recruitment_cycle).start()
+    Timer(300, recruitment_cycle).start()
+
 
 def get_ranks():
     leaderboard = {}
@@ -25,6 +26,7 @@ def get_ranks():
         leaderboard[p.name] = p.get_total_score()
         #print(leaderboard[p.name])
     return OrderedDict(sorted(leaderboard.items(), key=lambda v: v[1], reverse=True))
+
 
 def get_top_three():
     leaderboard = {}
