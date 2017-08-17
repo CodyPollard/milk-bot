@@ -179,7 +179,7 @@ class Army(object):
 
     def get_spy_power(self):
         weapon_strength = self.get_offensive_weapons()[0]
-        total_power = weapon_strength*int(self.__dict__['s_footman'])
+        total_power = weapon_strength*int(self.__dict__['c_spy'])
         print('Total Power: ', total_power)
         return total_power
 
@@ -201,7 +201,7 @@ class Army(object):
 
     def get_sentry_power(self):
         weapon_strength = self.get_offensive_weapons()[0]
-        total_power = weapon_strength*int(self.__dict__['s_footman'])
+        total_power = weapon_strength*int(self.__dict__['c_sentry'])
         print('Total Power: ', total_power)
         return total_power
 
