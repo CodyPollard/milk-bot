@@ -29,6 +29,7 @@ class Player(object):
             p = db.players.find_one({'name': user})
             self.name = user
             self.race = p['race']
+            self.gold = p['gold']
             self.recruit_rate = p['recruit_rate']
             self.update_stats()
 
