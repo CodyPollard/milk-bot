@@ -163,6 +163,15 @@ async def chaos(ctx, *args):
     elif 'help' in msg.split(' ')[-1]:
         return await milk_bot.say("For a full list of commands refer to the Bot's GitHub page.\n"
                                   "https://github.com/CodyPollard/milk-bot")
+    elif 'top3' in msg.split(' ')[-1]:
+        leaders = coc.get_top_three()
+        out = []
+        for i in leaders:
+            out.append('{}: {}'.format(i, leaders[i]))
+        return await milk_bot.say('Top 3 Leaderboard:\n'
+                                  '{}\n'
+                                  '{}\n'
+                                  '{}'.format(out[0], out[1], out[2]))
     # Runs if none of the above commands are given
     else:
         return await milk_bot.say('Invalid command. Please see !chaos help for more info')

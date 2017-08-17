@@ -1,5 +1,4 @@
 from pymongo import MongoClient
-# from CoC import unitinfo
 
 # DB info
 client = MongoClient()
@@ -43,9 +42,13 @@ class Player(object):
     def get_stats(self):
         return self.__dict__
 
+    def get_total_score(self):
+        c = Castle(self.name)
+        return (self.attack_power+self.defense_power+self.spy_power+self.sentry_power)*(float(c.upgrade_tier)*.25)*10
+
+
     def recruit_loop(self):
         Army(self.name).recruit_footman(self.recruit_rate)
-
 
 
 class Castle(object):
@@ -152,3 +155,4 @@ def set_race(r):
 if __name__ == '__main__':
     # DO THREADING SHIT HERE? #
     p = Player('onemore', 'human')
+    p.get_total_score()
