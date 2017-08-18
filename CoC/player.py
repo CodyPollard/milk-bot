@@ -117,34 +117,33 @@ class Army(object):
             self.sen_alarm = 0
             db.armies.insert_one(self.__dict__)
         else:
-            a = db.armies.find_one({'owner': user})
-            self.a_object = a
+            self.a = db.armies.find_one({'owner': user})
             # Soldiers
-            self.s_footman = a['s_footman']
+            self.s_footman = self.a['s_footman']
             # Covert Units
-            self.c_spy = a['c_spy']
-            self.c_sentry = a['c_sentry']
+            self.c_spy = self.a['c_spy']
+            self.c_sentry = self.a['c_sentry']
             # Offensive Weapons
-            self.ow_short_sword = a['ow_short_sword']
-            self.ow_flail = a['ow_flail']
-            self.ow_halberd = a['ow_halberd']
-            self.ow_cavalry = a['ow_cavalry']
+            self.ow_short_sword = self.a['ow_short_sword']
+            self.ow_flail = self.a['ow_flail']
+            self.ow_halberd = self.a['ow_halberd']
+            self.ow_cavalry = self.a['ow_cavalry']
             # Defensive Weapons
-            self.dw_kite_shield = a['dw_kite_shield']
-            self.dw_spear = a['dw_spear']
-            self.dw_tower_shield = a['dw_tower_shield']
-            self.dw_full_armor = a['dw_full_armor']
+            self.dw_kite_shield = self.a['dw_kite_shield']
+            self.dw_spear = self.a['dw_spear']
+            self.dw_tower_shield = self.a['dw_tower_shield']
+            self.dw_full_armor = self.a['dw_full_armor']
             # Spy Tools
-            self.st_rope = a['st_rope']
-            self.st_grapple_hook = a['st_grapple_hook']
-            self.st_short_bow = a['st_short_bow']
+            self.st_rope = self.a['st_rope']
+            self.st_grapple_hook = self.a['st_grapple_hook']
+            self.st_short_bow = self.a['st_short_bow']
             # Sentry Tools
-            self.sen_torch = a['sen_torch']
-            self.sen_guard_dog = a['sen_guard_dog']
-            self.sen_alarm = a['sen_alarm']
+            self.sen_torch = self.a['sen_torch']
+            self.sen_guard_dog = self.a['sen_guard_dog']
+            self.sen_alarm = self.a['sen_alarm']
 
     def update_army(self):
-        self.a_object = db.armies.find_one({'owner': self.a_object['owner']})
+        self.a = db.armies.find_one({'owner': self.a['owner']})
 
     def get_defensive_power(self):
         weapon_strength = self.get_defensive_weapons()[0]
@@ -230,7 +229,7 @@ class Army(object):
 
     # Increments the user's footman count based on their recruitment_rate in Player
     def recruit_footman(self, inc):
-        db.armies.update_one({'owner': self.a_object['owner']}, {'$inc': {'s_footman': inc}}, upsert=False)
+        db.armies.update_one({'owner': self.a['owner']}, {'$inc': {'s_footman': inc}}, upsert=False)
         self.update_army()
 
 
@@ -262,7 +261,13 @@ def set_race(r):
 if __name__ == '__main__':
     p = Player('onemore', 'human')
     c = Castle(p.name)
+    a = Army(p.name)
     print(c.__dict__)
+    print(p.gold)
+    print(a.s_footman)
     print('Upgrading')
-    c.upgrade_castle()
+    print('----------------')
     p.recruit_loop()
+    print(c.__dict__)
+    print(p.gold)
+    print(a.s_footman)
