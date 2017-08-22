@@ -10,11 +10,21 @@ db = client.coc
 
 milk_bot = Bot(command_prefix="!")
 eight = misc.eightball
+CHAOS_PLAYER_NAMES = None
 
 @milk_bot.event
 async def on_ready():
+    global CHAOS_PLAYER_NAMES
     print("Client logged in")
     coc.recruitment_cycle()
+    CHAOS_PLAYER_NAMES = get_all_chaos_players()
+
+
+def get_all_chaos_players():
+    all_chaos_players = []
+    for i in db.players.find():
+        all_chaos_players.append(i['name'].split('#')[0].lower().split(' ')[0])
+    return all_chaos_players
 
 
 # Meta Commands #
@@ -22,6 +32,7 @@ async def on_ready():
 @milk_bot.command()
 async def info(*args):
     """Displays info about the bot's code and the !ra command"""
+    print(CHAOS_PLAYER_NAMES)
     return await milk_bot.say('I am currently hosted at: https://github.com/CodyPollard/milk-bot\n'
                               'To suggest features and track development type !ra for access to the bot-help channel.')
 
@@ -296,7 +307,6 @@ async def raceinfo(ctx, *args):
 async def castle(ctx, *args):
     msg = ctx.message.content
     user = str(ctx.message.author)
-    # Runs if !chaos myinfo is given
     if db.players.find({'name': user}).count() is 0:
         return await milk_bot.say('Your profile does not exist. Type !chaos newgame to create one.')
     elif 'upgrade' in msg.split(' ')[-1]:
@@ -311,6 +321,20 @@ async def castle(ctx, *args):
     else:
         c = player.Castle(user)
         return await milk_bot.say('Your next castle upgrade costs: {} gold.'.format(c.up_cost))
+
+@milk_bot.command(pass_context=True)
+async def spy(ctx, *args):
+    msg = ctx.message.content
+    user = str(ctx.message.author)
+    defender = str(msg.split(' ')[-1]).lower()
+    attacker = user
+    if attacker.split('#')[0].lower().split(' ')[0] in defender:
+        return await milk_bot.say('Stop hitting yourself')
+    elif defender in CHAOS_PLAYER_NAMES:
+        intel = coc.spy_on_player(attacker, defender)
+        return await milk_bot.say(intel)
+    else:
+        return await milk_bot.say('That player does not exist, please try again with a valid player.')
 
 # Start the bot
 milk_bot.run(secrets.token_id)
