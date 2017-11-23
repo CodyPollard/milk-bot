@@ -1,5 +1,6 @@
 # misc.py handles all misc commands
-
+import sqlite3, re
+from sqlite3 import Error
 
 # 8 Ball #
 eightball = ['It is certain','It is decidedly so','Without a doubt','Yes definitely','You may rely on it','As I see it, yes',
@@ -22,5 +23,19 @@ def get_shopping_list():
     return slist
 
 
+# Ducks Injuries
+def get_latest_injury():
+    # Choose DB
+    db = 'ducks.sqlite3'
+    conn = sqlite3.connect(db)
+    cur = conn.cursor()
+    cur.execute("select headline from milk_ducksinjury order by id desc limit 1")
+    latest = cur.fetchall()
+    latest_str = [tup[0] for tup in latest]
+    return re.sub(r'([^\s\w]|_)+', '', latest_str[0])
+
+
 if __name__ == "__main__":
-    pass
+    print(get_latest_injury())
+
+

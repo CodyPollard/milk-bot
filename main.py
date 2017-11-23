@@ -96,6 +96,12 @@ async def eightball(*args):
     return await milk_bot.say(random.choice(eight))
 
 
+@milk_bot.command()
+async def injury(*args):
+    """Get latest Ducks Injury"""
+    return await milk_bot.say(misc.get_latest_injury())
+
+
 @milk_bot.command(pass_context=True)
 async def summary(ctx, *args):
     """Coming Soon"""
@@ -335,6 +341,13 @@ async def spy(ctx, *args):
         return await milk_bot.say(intel)
     else:
         return await milk_bot.say('That player does not exist, please try again with a valid player.')
+
+@milk_bot.command(pass_context=True)
+async def uhh(ctx, *args):
+    aid = '<@{}>'.format(ctx.message.author.id)
+    return await milk_bot.say('I think this worked?\n{}'.format(aid))
+
+
 
 # Start the bot
 milk_bot.run(secrets.token_id)
