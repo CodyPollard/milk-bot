@@ -32,7 +32,7 @@ def get_latest_injury():
     cur.execute("select headline from milk_ducksinjury order by id desc limit 1")
     latest = cur.fetchall()
     latest_str = [tup[0] for tup in latest]
-    return re.sub(r'([^\s\w]|_)+', '', latest_str[0])
+    return latest_str[0]
 
 
 if __name__ == "__main__":
