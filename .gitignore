@@ -2,4 +2,5 @@ secrets.py
 __pycache__
 .idea/
 misc/quotes.txt
+ducks.sqlite3
 shoppinglist.txt

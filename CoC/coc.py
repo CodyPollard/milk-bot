@@ -10,6 +10,7 @@ import random
 client = MongoClient()
 db = client.coc
 
+
 # Combat equation used for any offensive action. Accepts 2 arguments, attacker's power and defender's power. Returns
 # the % chance on a scale of 0-100 that the attacker succeeds.
 def COMBAT(attacker, defender):

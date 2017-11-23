@@ -1,6 +1,5 @@
 # misc.py handles all misc commands
-import sqlite3, re
-from sqlite3 import Error
+import sqlite3, secrets
 
 # 8 Ball #
 eightball = ['It is certain','It is decidedly so','Without a doubt','Yes definitely','You may rely on it','As I see it, yes',
@@ -26,7 +25,7 @@ def get_shopping_list():
 # Ducks Injuries
 def get_latest_injury():
     # Choose DB
-    db = 'ducks.sqlite3'
+    db = secrets.DB_PATH
     conn = sqlite3.connect(db)
     cur = conn.cursor()
     cur.execute("select headline from milk_ducksinjury order by id desc limit 1")

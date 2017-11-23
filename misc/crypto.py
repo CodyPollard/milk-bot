@@ -82,4 +82,5 @@ class Market(object):
 
 if __name__ == '__main__':
     # Market('BTC-NEO').write_daily_history()
-    Market('BTC-NEO').get_market_summary()
+    print(Market('BTC-NEO').get_market_summary())
+    print(get_btc_summary())
