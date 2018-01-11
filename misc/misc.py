@@ -1,5 +1,4 @@
 # misc.py handles all misc commands
-import sqlite3, secrets
 
 # 8 Ball #
 eightball = ['It is certain','It is decidedly so','Without a doubt','Yes definitely','You may rely on it','As I see it, yes',
@@ -21,20 +20,8 @@ def get_shopping_list():
 
     return slist
 
-
-# Ducks Injuries
-def get_latest_injury():
-    # Choose DB
-    db = secrets.DB_PATH
-    conn = sqlite3.connect(db)
-    cur = conn.cursor()
-    cur.execute("select headline from milk_ducksinjury order by id desc limit 1")
-    latest = cur.fetchall()
-    latest_str = [tup[0] for tup in latest]
-    return latest_str[0]
-
-
+# Main
 if __name__ == "__main__":
-    print(get_latest_injury())
-
+    # Tests here and stuff
+    pass
 

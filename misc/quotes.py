@@ -133,8 +133,7 @@ def get_unique_authors():
 
     return unique_authors
 
+# Main
 if __name__ == "__main__":
-    d = DBQuote()
-    d.get_quote('cody')
-    print(d.quote['msg'])
-    print(d.quote['call_count'])
+    # Tests here and stuff
+    pass
