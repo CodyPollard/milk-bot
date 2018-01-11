@@ -2,8 +2,8 @@
 Custom Discord Bot
 
 # Information needed if you run your own version of this bot #
-Create the file "quotes.txt" in the /misc folder. Before deploying your bot you also need to make changes  
-to the !templink, !info, and !ra command.  
+The quote commands use Mongodb, simply set up a vanilla Mongodb install on your server and the bot will create DBs as needed.
+Before deploying your bot you also need to make changes to the !templink, !info, and !ra command.
 
 !templink - Replace the hardcoded discord invite link with your own.  
 !info - Replace your github link if you create your own branch.  
