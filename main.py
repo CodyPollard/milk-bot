@@ -27,10 +27,13 @@ async def on_ready():
 
 # Statup stuff #
 def quote_timer():
-    sleep(60 * (60 - datetime.datetime.now().minute))
+    print('Quote timer started')
+    sleep(1 * (60 - datetime.datetime.now().minute))
     while True:
+        print('In the loop')
         quote()
-    sleep(60 * 60)
+        print('Sleeping for one minute')
+        sleep(1 * 60)
 
 
 def get_all_chaos_players():
