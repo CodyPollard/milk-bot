@@ -109,12 +109,13 @@ def get_top_three():
         p = player.Player(document['name'])
         leaderboard[p.name] = p.get_total_score()
     temp = OrderedDict(sorted(leaderboard.items(), key=lambda v: v[1], reverse=True))
-    try:
-        sliced = islice(temp.items(), 3)
-        sliced_o = OrderedDict(sliced)
-        return sliced_o
-    except IndexError:
-        return 'IE'
+    return temp
+    # try:
+    #     sliced = islice(temp.items(), 3)
+    #     sliced_o = OrderedDict(sliced)
+    #     return sliced_o
+    # except IndexError:
+    #     return 'IE'
 
 # Runs when the bot starts
 if __name__ == '__main__':

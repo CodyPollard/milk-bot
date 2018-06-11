@@ -168,16 +168,13 @@ async def chaos(ctx, *args):
     elif 'top3' in msg.split(' ')[-1]:
         leaders = coc.get_top_three()
         # print(leaders[2])
-        if len(leaders) < 3:
-            return await milk_bot.say('There needs to be at least 3 players for this command to work.')
-        else:
-            out = []
-            for i in leaders:
-                out.append('{}: {}'.format(i, leaders[i]))
-            return await milk_bot.say('Top 3 Leaderboard:\n'
-                                      '{}\n'
-                                      '{}\n'
-                                      '{}'.format(out[0], out[1], out[2]))
+        out = []
+        for i in leaders:
+            out.append('{}: {}'.format(i, leaders[i]))
+        return await milk_bot.say('Top 3 Leaderboard:\n'
+                                  '{}\n'
+                                  '{}\n'
+                                  '{}'.format(out[0], out[1], out[2]))
     # Runs if none of the above commands are given
     else:
         return await milk_bot.say('Invalid command. Please see !chaos help for more info')
