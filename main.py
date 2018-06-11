@@ -1,4 +1,6 @@
 from discord.ext.commands import Bot
+from time import sleep
+import datetime
 from misc import misc, quotes
 from CoC import player, coc
 import random, secrets, os
@@ -12,12 +14,23 @@ milk_bot = Bot(command_prefix="!")
 eight = misc.eightball
 CHAOS_PLAYER_NAMES = None
 
+# Runs on startup
 @milk_bot.event
 async def on_ready():
     global CHAOS_PLAYER_NAMES
     print("Client logged in")
+    # Start cycles
     coc.recruitment_cycle()
     CHAOS_PLAYER_NAMES = get_all_chaos_players()
+    quote_timer()
+
+
+# Statup stuff #
+def quote_timer():
+    sleep(60 * (60 - datetime.datetime.now().minute))
+    while True:
+        quote()
+    sleep(60 * 60)
 
 
 def get_all_chaos_players():
