@@ -4,3 +4,5 @@ __pycache__
 misc/quotes.txt
 ducks.sqlite3
 shoppinglist.txt
+.main.py.swp
+main.py.save
