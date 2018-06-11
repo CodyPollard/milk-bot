@@ -22,20 +22,10 @@ async def on_ready():
     # Start cycles
     coc.recruitment_cycle()
     CHAOS_PLAYER_NAMES = get_all_chaos_players()
-    quote_timer()
+    quotes.hourly_quote()
 
 
 # Statup stuff #
-def quote_timer():
-    print('Quote timer started')
-    sleep(1 * (60 - datetime.datetime.now().minute))
-    while True:
-        print('In the loop')
-        quote()
-        print('Sleeping for one minute')
-        sleep(1 * 60)
-
-
 def get_all_chaos_players():
     all_chaos_players = []
     for i in db.players.find():

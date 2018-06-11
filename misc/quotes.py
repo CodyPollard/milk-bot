@@ -1,6 +1,8 @@
 import re
 from pymongo import MongoClient
 import random
+from threading import Timer
+import datetime
 
 client = MongoClient()
 db = client.quotes
@@ -10,6 +12,22 @@ collection = db.milk_quotes
 # AddQuotes #
 class ValidationError(Exception):
     pass
+
+
+# Hourly Quotes #
+def hourly_quote():
+    print('Quote timer started')
+    # Definitions
+    q = DBQuote()
+    call_total = get_call_count_total()
+    # Print a quote at the end of the timer
+    print('In the loop')
+    q.get_quote()
+    formatted = '{0:.3g}'.format(q.quote['call_count'] / call_total * 100)
+    print('"{}"{} \nThis quote has been used {} times accounting for'
+          ' {}% of total usage.'.format(q.quote['msg'], q.quote['author'], q.quote['call_count'], formatted))
+    print('Sleeping for one minute')
+    Timer(1800, hourly_quote).start()
 
 
 # AddQuote handles the user input for a quote before it is added to a database
