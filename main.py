@@ -1,6 +1,6 @@
+import asyncio
 from discord.ext.commands import Bot
-from time import sleep
-import datetime
+from threading import Timer
 from misc import misc, quotes
 from CoC import player, coc
 import random, secrets, os
@@ -14,6 +14,7 @@ milk_bot = Bot(command_prefix="!")
 eight = misc.eightball
 CHAOS_PLAYER_NAMES = None
 
+
 # Runs on startup
 @milk_bot.event
 async def on_ready():
@@ -22,10 +23,39 @@ async def on_ready():
     # Start cycles
     coc.recruitment_cycle()
     CHAOS_PLAYER_NAMES = get_all_chaos_players()
-    quotes.hourly_quote()
+    await hourly_quote()
 
 
 # Statup stuff #
+@milk_bot.event
+async def hourly_quote():
+    print('Quote timer started')
+    # Definitions
+    q = quotes.DBQuote()
+    # Sunflower ID 438162774917644288, general ID 438162774917644290, milk-general ID 222412917365145601
+    sunflower_general = milk_bot.get_channel('438162774917644290')
+    milk_general = milk_bot.get_channel('222412917365145601')
+    channel_list = [sunflower_general, milk_general]
+
+    while True:
+        # Print a quote at the end of the timer
+        print('In the loop')
+        call_total = quotes.get_call_count_total()
+        q.get_quote()
+        formatted = '{0:.3g}'.format(q.quote['call_count'] / call_total * 100)
+        for i in channel_list:
+            await milk_bot.send_message(i, '"{}"{} \nThis quote has been used {} times accounting for'
+                                                           ' {}% of total usage.'.format(q.quote['msg'],
+                                                                                         q.quote['author'],
+                                                                                         q.quote['call_count'],
+                                                                                         formatted))
+
+        print('Sleeping for one minute')
+        await asyncio.sleep(60*60)
+
+
+
+
 def get_all_chaos_players():
     all_chaos_players = []
     for i in db.players.find():
