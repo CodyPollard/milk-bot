@@ -54,8 +54,8 @@ async def hourly_quote():
                                                                                                  q.quote['call_count'],
                                                                                                  formatted))
 
-        # Sleep event for 2 hours
-        await asyncio.sleep(60*60)
+        # Sleep event for 3 hours
+        await asyncio.sleep(60*60*3)
 
 
 
