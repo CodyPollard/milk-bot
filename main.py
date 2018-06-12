@@ -38,19 +38,23 @@ async def hourly_quote():
     channel_list = [sunflower_general, milk_general]
 
     while True:
-        # Print a quote at the end of the timer
-        print('In the loop')
-        call_total = quotes.get_call_count_total()
-        q.get_quote()
-        formatted = '{0:.3g}'.format(q.quote['call_count'] / call_total * 100)
-        for i in channel_list:
-            await milk_bot.send_message(i, '"{}"{} \nThis quote has been used {} times accounting for'
-                                                           ' {}% of total usage.'.format(q.quote['msg'],
-                                                                                         q.quote['author'],
-                                                                                         q.quote['call_count'],
-                                                                                         formatted))
+        # Check if any messages have been sent since last quote
+        async for message in milk_bot.logs_from(sunflower_general, limit=1):
+            if 'milk-bot' in str(message.author):
+                break
+            else:
+                # Print a quote at the end of the timer
+                call_total = quotes.get_call_count_total()
+                q.get_quote()
+                formatted = '{0:.3g}'.format(q.quote['call_count'] / call_total * 100)
+                for i in channel_list:
+                    await milk_bot.send_message(i, '"{}"{} \nThis quote has been used {} times accounting for'
+                                                                   ' {}% of total usage.'.format(q.quote['msg'],
+                                                                                                 q.quote['author'],
+                                                                                                 q.quote['call_count'],
+                                                                                                 formatted))
 
-        print('Sleeping for one minute')
+        # Sleep event for 2 hours
         await asyncio.sleep(60*60)
 
 
