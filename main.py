@@ -58,14 +58,13 @@ async def hourly_quote():
                 formatted = '{0:.3g}'.format(q.quote['call_count'] / call_total * 100)
                 for i in channel_list:
                     pass
-                    # await milk_bot.send_message(i, '"{}"{} \nThis quote has been used {} times accounting for'
-                    #                                                ' {}% of total usage.'.format(q.quote['msg'],
-                    #                                                                              q.quote['author'],
-                    #                                                                              q.quote['call_count'],
-                    #                                                                              formatted))
+                    await milk_bot.send_message(i, '"{}"{} \nThis quote has been used {} times accounting for'
+                                                                   ' {}% of total usage.'.format(q.quote['msg'],
+                                                                                                 q.quote['author'],
+                                                                                                 q.quote['call_count'],
+                                                                                                 formatted))
 
         # Sleep event for x hours
-        print(quote_interval)
         await asyncio.sleep(60*60*quote_interval)
 
 

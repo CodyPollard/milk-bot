@@ -19,9 +19,9 @@ class Settings(object):
         self.quote_interval = data['quote_interval']
         # print(self.quote_interval)
 
-    def is_admin(self):
-        # Check if user issuing command is an admin
-        return bool
+    # def is_admin(self):
+    #     # Check if user issuing command is an admin
+    #     return bool
 
     def validate_quote_interval(self, x):
         # Check if interval given is an int in the valid range
@@ -48,5 +48,5 @@ class Settings(object):
             json.dump(data, f, indent=4)
             f.truncate()
 
-if __name__ == '__main__':
-    TEMP = Settings()
+# if __name__ == '__main__':
+#     TEMP = Settings()
