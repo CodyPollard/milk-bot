@@ -1,15 +1,19 @@
 import asyncio
 from discord.ext.commands import Bot
-from threading import Timer
 from misc import misc, quotes
 from CoC import player, coc
+from settings import Settings
 import random, secrets, os
 from pymongo import MongoClient
 
 # DB info
 client = MongoClient()
 db = client.coc
-
+# Settings
+settings = Settings()
+admins = settings.admins
+quote_interval = settings.quote_interval
+# Other stuff
 milk_bot = Bot(command_prefix="!")
 eight = misc.eightball
 CHAOS_PLAYER_NAMES = None
@@ -23,7 +27,12 @@ async def on_ready():
     # Start cycles
     coc.recruitment_cycle()
     CHAOS_PLAYER_NAMES = get_all_chaos_players()
+    # Load settings
     await hourly_quote()
+
+    # Print Settings stuff
+    print(quote_interval)
+    print(admins)
 
 
 # Statup stuff #
@@ -48,16 +57,16 @@ async def hourly_quote():
                 q.get_quote()
                 formatted = '{0:.3g}'.format(q.quote['call_count'] / call_total * 100)
                 for i in channel_list:
-                    await milk_bot.send_message(i, '"{}"{} \nThis quote has been used {} times accounting for'
-                                                                   ' {}% of total usage.'.format(q.quote['msg'],
-                                                                                                 q.quote['author'],
-                                                                                                 q.quote['call_count'],
-                                                                                                 formatted))
+                    pass
+                    # await milk_bot.send_message(i, '"{}"{} \nThis quote has been used {} times accounting for'
+                    #                                                ' {}% of total usage.'.format(q.quote['msg'],
+                    #                                                                              q.quote['author'],
+                    #                                                                              q.quote['call_count'],
+                    #                                                                              formatted))
 
-        # Sleep event for 3 hours
-        await asyncio.sleep(60*60*3)
-
-
+        # Sleep event for x hours
+        print(quote_interval)
+        await asyncio.sleep(60*60*quote_interval)
 
 
 def get_all_chaos_players():
@@ -78,17 +87,32 @@ async def info(*args):
 
 
 @milk_bot.command(pass_context=True)
-async def ra(ctx, *args):
-    """Grants user the role 'Bot Tester'"""
-    r = ctx.message.server.roles
-    for i in r:
-        if i.name == "Bot Tester":
-            return await milk_bot.add_roles(ctx.message.author, i)
-
-@milk_bot.command()
-async def templink(*args):
-    """Displays a join link for the Discord server"""
-    return await milk_bot.say("Temp link: https://discord.gg/5tnDXvZ")
+async def settings(ctx, *args):
+    """Allows admins to adjust some variable bot settings'"""
+    # Check for admin role or something here
+    msg = ctx.message.content
+    tmpset = Settings()
+    if str(ctx.message.author) in admins:
+        await milk_bot.say('You are an admin')
+        if msg == '!settings':
+            # Display list of changeable settings
+            return await milk_bot.say('To change a setting use !settings [command] [value]\n'
+                                      'Available settings include:\n'
+                                      'interval - Set quote interval by the hour.')
+            pass
+        elif msg.split(' ')[1] == 'interval':
+            # Validate and set quote interval
+            # Cast third portion of command as an int for validation
+            interval = int(msg.split(' ')[2])
+            if tmpset.validate_quote_interval(interval) is True:
+                tmpset.set_quote_interval(interval)
+                return await milk_bot.say('Quote interval set to {} hours'.format(interval))
+            else:
+                return await milk_bot.say('Please enter a valid interval between 1 and 12')
+        else:
+            return await milk_bot.say("That command doesn't exist. Use !settings to get a list of valid commands")
+    else:
+        return await milk_bot.say('You do not have access to this command.')
 
 
 # Quote Commands #
