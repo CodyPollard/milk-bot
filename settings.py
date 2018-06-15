@@ -25,7 +25,6 @@ class Settings(object):
     #     # Check if user issuing command is an admin
     #     return bool
 
-    @staticmethod
     def validate_quote_interval(self, x):
         # Check if interval given is an int in the valid range
         if isinstance(x, int) and 1 <= x <= 12:
@@ -33,7 +32,6 @@ class Settings(object):
         else:
             return False
 
-    @staticmethod
     def set_quote_interval(self, x):
         # Write new interval into settings.json after validation
         with open(PROGRAM_PATH + '/settings.json', 'r+') as f:
@@ -43,7 +41,6 @@ class Settings(object):
             json.dump(data, f, indent=4)
             f.truncate()
 
-    @staticmethod
     def set_admin(x):
         # Add admin to list of existing admins
         with open(PROGRAM_PATH + '/settings.json', 'r+') as f:
