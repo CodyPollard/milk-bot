@@ -10,8 +10,11 @@ class Settings(object):
     def __init__(self):
         print('Reading settings.json')
         # Read settings from settings.json
-        with open('settings.json') as f:
-            data = json.load(f)
+        try:
+            with open('settings.json') as f:
+                data = json.load(f)
+        except OSError as e:
+            print(e)
         # Set values
         print('Assigning settings')
         self.admins = data['admins']
