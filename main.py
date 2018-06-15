@@ -80,7 +80,6 @@ def get_all_chaos_players():
 @milk_bot.command()
 async def info(*args):
     """Displays info about the bot's code and the !ra command"""
-    print(CHAOS_PLAYER_NAMES)
     return await milk_bot.say('I am currently hosted at: https://github.com/CodyPollard/milk-bot\n'
                               'To suggest features and track development type !ra for access to the bot-help channel.')
 
@@ -92,7 +91,6 @@ async def settings(ctx, *args):
     msg = ctx.message.content
     tmpset = Settings()
     if str(ctx.message.author) in admins:
-        await milk_bot.say('You are an admin')
         if msg == '!settings':
             # Display list of changeable settings
             return await milk_bot.say('To change a setting use !settings [command] [value]\n'
