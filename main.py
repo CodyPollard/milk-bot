@@ -1,4 +1,4 @@
-import asyncio
+import asyncio, logging
 from discord.ext.commands import Bot
 from misc import misc, quotes
 from CoC import player, coc
@@ -13,6 +13,19 @@ db = client.coc
 settings = Settings()
 admins = settings.admins
 quote_interval = settings.quote_interval
+
+# Logging
+logging.basicConfig(level=logging.DEBUG)
+logger = logging.getLogger(__name__)
+# Create a file handler
+handler = logging.FileHandler('main.log')
+handler.setLevel(logging.DEBUG)
+# Create a logging format
+formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+handler.setFormatter(formatter)
+# Add the handlers to the logger
+logger.addHandler(handler)
+
 # Other stuff
 milk_bot = Bot(command_prefix="!")
 eight = misc.eightball
@@ -22,23 +35,19 @@ CHAOS_PLAYER_NAMES = None
 # Runs on startup
 @milk_bot.event
 async def on_ready():
+    logger.info('Client logged in.')
+    logger.debug('Starting cycles.')
     global CHAOS_PLAYER_NAMES
-    print("Client logged in")
     # Start cycles
     coc.recruitment_cycle()
     CHAOS_PLAYER_NAMES = get_all_chaos_players()
     # Load settings
     await hourly_quote()
 
-    # Print Settings stuff
-    print(quote_interval)
-    print(admins)
-
 
 # Statup stuff #
 @milk_bot.event
 async def hourly_quote():
-    print('Quote timer started')
     # Definitions
     q = quotes.DBQuote()
     # Sunflower ID 438162774917644288, general ID 438162774917644290, milk-general ID 222412917365145601
@@ -50,22 +59,25 @@ async def hourly_quote():
         # Check if any messages have been sent since last quote
         async for message in milk_bot.logs_from(sunflower_general, limit=1):
             if 'milk-bot' in str(message.author):
+                logging.debug('Last message was from milk_bot, skipping quote for this cycle.')
                 break
             else:
+                logging.debug('Posting quote for this cycle.')
                 # Print a quote at the end of the timer
                 call_total = quotes.get_call_count_total()
                 q.get_quote()
                 formatted = '{0:.3g}'.format(q.quote['call_count'] / call_total * 100)
-                for i in channel_list:
-                    pass
-                    await milk_bot.send_message(i, '"{}"{} \nThis quote has been used {} times accounting for'
-                                                                   ' {}% of total usage.'.format(q.quote['msg'],
-                                                                                                 q.quote['author'],
-                                                                                                 q.quote['call_count'],
-                                                                                                 formatted))
+                # for i in channel_list:
+                #     await milk_bot.send_message(i, '"{}"{} \nThis quote has been used {} times accounting for'
+                #                                                    ' {}% of total usage.'.format(q.quote['msg'],
+                #                                                                                  q.quote['author'],
+                #                                                                                  q.quote['call_count'],
+                #                                                                                  formatted))
 
         # Sleep event for x hours
-        await asyncio.sleep(60*60*quote_interval)
+        sleep_time = 60*60*quote_interval
+        logger.debug('Sleeping for %s seconds.', sleep_time)
+        await asyncio.sleep(sleep_time)
 
 
 def get_all_chaos_players():
@@ -228,7 +240,7 @@ async def chaos(ctx, *args):
     # Runs if !chaos top3 is given
     elif 'top3' in msg.split(' ')[-1]:
         leaders = coc.get_top_three()
-        # print(leaders[2])
+
         out = []
         for i in leaders:
             out.append('{}: {}'.format(i, leaders[i]))

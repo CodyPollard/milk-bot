@@ -1,25 +1,36 @@
 import os
-import json
+import json, logging
 # misc Settings
 PROGRAM_PATH = os.path.dirname(os.path.realpath(__file__))
 MISC_PATH = PROGRAM_PATH+'/misc/'
+
+# Logging
+logging.basicConfig(level=logging.DEBUG)
+logger = logging.getLogger(__name__)
+# Create a file handler
+handler = logging.FileHandler('settings.log')
+handler.setLevel(logging.DEBUG)
+# Create a logging format
+formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+handler.setFormatter(formatter)
+# Add the handlers to the logger
+logger.addHandler(handler)
 
 
 class Settings(object):
 
     def __init__(self):
         # Read settings from settings.json
+        logger.debug('Initializing Settings')
         try:
             with open(PROGRAM_PATH + '/settings.json') as f:
                 data = json.load(f)
         except OSError as e:
-            print(e)
+            logger.error(e)
         # Set values
-        print('Assigning settings')
+        logger.debug('Assinging settings')
         self.admins = data['admins']
-        # print(self.admins[0])
         self.quote_interval = data['quote_interval']
-        # print(self.quote_interval)
 
     # def is_admin(self):
     #     # Check if user issuing command is an admin
