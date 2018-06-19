@@ -69,12 +69,12 @@ async def hourly_quote():
                 call_total = quotes.get_call_count_total()
                 q.get_quote()
                 formatted = '{0:.3g}'.format(q.quote['call_count'] / call_total * 100)
-                for i in channel_list:
-                    await milk_bot.send_message(i, '"{}"{} \nThis quote has been used {} times accounting for'
-                                                                   ' {}% of total usage.'.format(q.quote['msg'],
-                                                                                                 q.quote['author'],
-                                                                                                 q.quote['call_count'],
-                                                                                                 formatted))
+                # for i in channel_list:
+                #     await milk_bot.send_message(i, '"{}"{} \nThis quote has been used {} times accounting for'
+                #                                                    ' {}% of total usage.'.format(q.quote['msg'],
+                #                                                                                  q.quote['author'],
+                #                                                                                  q.quote['call_count'],
+                #                                                                                  formatted))
 
         # Sleep event for x hours
         sleep_time = 60*60*quote_interval
@@ -102,9 +102,10 @@ async def info(*args):
 async def settings(ctx, *args):
     """Allows admins to adjust some variable bot settings'"""
     # Check for admin role or something here
+    s = Settings()
     msg = ctx.message.content
     tmpset = Settings()
-    if settings.is_admin(str(ctx.message.author)):
+    if s.is_admin(str(ctx.message.author)):
         if msg == '!settings':
             # Display list of changeable settings
             return await milk_bot.say('To change a setting use !settings [command] [value]\n'
