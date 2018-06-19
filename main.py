@@ -2,7 +2,7 @@ import asyncio, logging
 from discord.ext.commands import Bot
 from misc import misc, quotes
 from CoC import player, coc
-from settings import Settings
+from settings import Settings, PROGRAM_PATH
 import random, secrets, os
 from pymongo import MongoClient
 
@@ -12,13 +12,12 @@ db = client.coc
 # Settings
 settings = Settings()
 admins = settings.admins
-quote_interval = settings.quote_interval
 
 # Logging
 logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger(__name__)
 # Create a file handler
-handler = logging.FileHandler('main.log')
+handler = logging.FileHandler(PROGRAM_PATH + '/main.log')
 handler.setLevel(logging.DEBUG)
 # Create a logging format
 formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
@@ -50,12 +49,15 @@ async def on_ready():
 async def hourly_quote():
     # Definitions
     q = quotes.DBQuote()
+    s = Settings()
     # Sunflower ID 438162774917644288, general ID 438162774917644290, milk-general ID 222412917365145601
     sunflower_general = milk_bot.get_channel('438162774917644290')
     milk_general = milk_bot.get_channel('222412917365145601')
     channel_list = [sunflower_general, milk_general]
 
     while True:
+        logging.debug('Resetting quote_interval')
+        quote_interval = s.get_quote_interval()
         # Check if any messages have been sent since last quote
         async for message in milk_bot.logs_from(sunflower_general, limit=1):
             if 'milk-bot' in str(message.author):
@@ -102,7 +104,7 @@ async def settings(ctx, *args):
     # Check for admin role or something here
     msg = ctx.message.content
     tmpset = Settings()
-    if str(ctx.message.author) in admins:
+    if settings.is_admin(str(ctx.message.author)):
         if msg == '!settings':
             # Display list of changeable settings
             return await milk_bot.say('To change a setting use !settings [command] [value]\n'

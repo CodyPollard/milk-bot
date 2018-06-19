@@ -8,7 +8,7 @@ MISC_PATH = PROGRAM_PATH+'/misc/'
 logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger(__name__)
 # Create a file handler
-handler = logging.FileHandler('settings.log')
+handler = logging.FileHandler(PROGRAM_PATH + '/settings.log')
 handler.setLevel(logging.DEBUG)
 # Create a logging format
 formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
@@ -21,7 +21,7 @@ class Settings(object):
 
     def __init__(self):
         # Read settings from settings.json
-        logger.debug('Initializing Settings')
+        logger.info('Initializing Settings')
         try:
             with open(PROGRAM_PATH + '/settings.json') as f:
                 data = json.load(f)
@@ -32,9 +32,15 @@ class Settings(object):
         self.admins = data['admins']
         self.quote_interval = data['quote_interval']
 
-    # def is_admin(self):
-    #     # Check if user issuing command is an admin
-    #     return bool
+    def is_admin(self, author):
+        # Check if user issuing command is an admin
+        if author in self.admins:
+            return True
+        else:
+            return False
+
+    def get_quote_interval(self):
+        return self.quote_interval
 
     def validate_quote_interval(self, x):
         # Check if interval given is an int in the valid range
