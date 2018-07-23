@@ -7,3 +7,4 @@ shoppinglist.txt
 .main.py.swp
 main.py.save
 *.log
+tests/

@@ -28,7 +28,6 @@ logger.addHandler(handler)
 # Other stuff
 milk_bot = Bot(command_prefix="!")
 eight = misc.eightball
-CHAOS_PLAYER_NAMES = None
 
 
 # Runs on startup
@@ -36,11 +35,6 @@ CHAOS_PLAYER_NAMES = None
 async def on_ready():
     logger.info('Client logged in.')
     logger.debug('Starting cycles.')
-    global CHAOS_PLAYER_NAMES
-    # Start cycles
-    coc.recruitment_cycle()
-    CHAOS_PLAYER_NAMES = get_all_chaos_players()
-    # Load settings
     await hourly_quote()
 
 
