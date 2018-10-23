@@ -3,13 +3,12 @@ Custom Discord Bot
 
 # Information needed if you run your own version of this bot #
 The quote commands use Mongodb, simply set up a vanilla Mongodb install on your server and the bot will create DBs as needed.
-Before deploying your bot you also need to make changes to the !templink, !info, and !ra command.
+Before deploying your bot you also need to make changes to the !templink, and !info command.
 
 !templink - Replace the hardcoded discord invite link with your own.  
-!info - Replace your github link if you create your own branch.  
-!ra - Either create the role 'Bot Tester' or rename the role for whichever role you would like to grant users.  
+!info - Replace your github link if you create your own branch.    
 
-# Chaos commands - Working
+# Chaos commands - Unfinished
 !chaos:   
 newgame - Starts a new profile and asks you to pick a race.  
 delete - Deletes all entries related to your existing profile.  
@@ -24,7 +23,6 @@ help - Links to milk-bot GitHub.
 !castle : Messages you the amount of gold required for your next upgrade.  
           upgrade - Upgrades your castle defenses if you have enough gold.  
 
-# Chaos commands - Unfinished
 !top3 - Displays the names of the five top ranked players.
 
 !intel: Messages you a short list of players with similar rank to you.  
