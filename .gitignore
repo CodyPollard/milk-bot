@@ -8,3 +8,4 @@ shoppinglist.txt
 main.py.save
 *.log
 tests/
+*.db

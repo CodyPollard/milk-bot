@@ -1,12 +1,17 @@
 import re
 from pymongo import MongoClient
-import random
+import random, sqlite3, datetime, os
 from threading import Timer
 import datetime
 
+# MongoDB #
 client = MongoClient()
 db = client.quotes
 collection = db.milk_quotes
+
+# SQLite #
+dir_path = os.path.dirname(os.path.realpath(__file__))
+db_path = dir_path + '/quotes.db'
 
 
 # AddQuotes #
@@ -134,6 +139,7 @@ def get_unique_authors():
             unique_authors.append(j)
 
     return unique_authors
+
 
 # Main
 if __name__ == "__main__":
