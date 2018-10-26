@@ -1,5 +1,5 @@
 from discord.ext.commands import Bot
-from misc import misc, quotes
+from misc import misc, quotes, user_metrics
 from settings import Settings, PROGRAM_PATH
 import random, secrets, os, logging
 from pymongo import MongoClient
@@ -87,9 +87,15 @@ async def add(ctx, *args):
     !add "[quote]" -[author]
     """
     msg = ctx.message.content
+    author = ctx.message.author
+    p = user_metrics.UserProfile(author)
     try:
-        quotes.validate_quote(msg)
-        return await milk_bot.say('Quote successfuly added.')
+        if p.user_exists():
+            quotes.validate_quote(msg)
+            p.increment_add()
+            return await milk_bot.say('Quote successfully added.')
+        else:
+            return await milk_bot.say('Please create a profile using !newprofile to gain access to this command.')
     except quotes.ValidationError as exception:
         return await milk_bot.say(exception)
 
@@ -101,26 +107,38 @@ async def quote(ctx, *args):
         q = quotes.DBQuote()
         msg = ctx.message.content
         call_total = quotes.get_call_count_total()
-        if '!quote' in msg.split(' ')[-1]:  # Print a random quote if no author is given
-            q.get_quote()
-            formatted = '{0:.3g}'.format(q.quote['call_count'] / call_total * 100)
-            return await milk_bot.say('"{}"{} \nThis quote has been used {} times accounting for'
-                                      ' {}% of total usage.'.format(q.quote['msg'], q.quote['author'], q.quote['call_count'], formatted))
-        else:  # Print a random quote by the given author
-            q.get_quote(msg.split(' ')[1])
-            formatted = '{0:.3g}'.format(q.quote['call_count'] / call_total * 100)
-            return await milk_bot.say('"{}"{} \nThis quote has been used {} times accounting for'
-                                      ' {}% of total usage.'.format(q.quote['msg'], q.quote['author'], q.quote['call_count'], formatted))
+        author = ctx.message.author
+        p = user_metrics.UserProfile(author)
+        if p.user_exists():
+            if '!quote' in msg.split(' ')[-1]:  # Print a random quote if no author is given
+                q.get_quote()
+                formatted = '{0:.3g}'.format(q.quote['call_count'] / call_total * 100)
+                p.increment_quote()
+                return await milk_bot.say('"{}"{} \nThis quote has been used {} times accounting for'
+                                          ' {}% of total usage.'.format(q.quote['msg'], q.quote['author'], q.quote['call_count'], formatted))
+            else:  # Print a random quote by the given author
+                q.get_quote(msg.split(' ')[1])
+                formatted = '{0:.3g}'.format(q.quote['call_count'] / call_total * 100)
+                return await milk_bot.say('"{}"{} \nThis quote has been used {} times accounting for'
+                                          ' {}% of total usage.'.format(q.quote['msg'], q.quote['author'], q.quote['call_count'], formatted))
+        else:
+            return await milk_bot.say('Please create a profile using !newprofile to gain access to this command.')
     except quotes.ValidationError as exception:
         return await milk_bot.say(exception)
 
 
 # Other Commands #
 
-@milk_bot.command(name='8ball')
-async def eightball(*args):
+@milk_bot.command(pass_context=True, name='8ball')
+async def eightball(ctx, *args):
     """Ask it a question"""
-    return await milk_bot.say(random.choice(eight))
+    author = ctx.message.author
+    p = user_metrics.UserProfile(author)
+    if p.user_exists():
+        p.increment_eightball()
+        return await milk_bot.say(random.choice(eight))
+    else:
+        return await milk_bot.say('Please create a profile using !newprofile to gain access to this command.')
 
 
 @milk_bot.command(pass_context=True)
@@ -150,6 +168,51 @@ async def slist(ctx, *args):
         misc.write_shopping_list(n)
         return await milk_bot.say('Succesfully added {} to the shopping list.\n'
                                   'Use !slist to view full list'.format(n))
+
+
+# Metric Commands #
+
+@milk_bot.command(pass_context=True)
+async def newdb(ctx, *args):
+    user_metrics.initialize_user_metrics_db()
+    return await milk_bot.say("Initialized")
+    s = Settings()
+    if s.is_admin(str(ctx.message.author)):
+        user_metrics.initialize_user_metrics_db()
+        return await milk_bot.say("Initialized")
+    else:
+        return await milk_bot.say('You do not have access to this command.')
+
+
+@milk_bot.command(pass_context=True)
+async def readdb(ctx, *args):
+    # user_metrics.read_db()
+    s = Settings()
+    if s.is_admin(str(ctx.message.author)):
+        return await milk_bot.say(user_metrics.read_db())
+    else:
+        return await milk_bot.say('You do not have access to this command.')
+
+
+@milk_bot.command(pass_context=True)
+async def newprofile(ctx, *args):
+    author = ctx.message.author
+    p = user_metrics.UserProfile(author)
+    # user_metrics.read_db()
+    response = p.create_profile()
+    return await milk_bot.say(response)
+
+
+@milk_bot.command(pass_context=True)
+async def profile(ctx, *args):
+    author = ctx.message.author
+    p = user_metrics.UserProfile(author)
+    if p.user_exists():
+        # Stat order (quote, eightball, add)
+        stats = p.get_profile()
+        return await milk_bot.say('```Stats for {}\nQuotes: {}\n8Ball: {}\nAdd: {}```'.format(p.usr, stats[0], stats[1], stats[2]))
+    else:
+        return await milk_bot.say('Please create a profile using !newprofile to access this command.')
 
 
 # # COC COMMANDS #

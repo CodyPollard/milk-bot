@@ -25,9 +25,20 @@ def initialize_user_metrics_db():
     conn.close()
 
 
+def read_db():
+    conn = sqlite3.connect('user_metrics.db')
+    cur = conn.cursor()
+    db_list = []
+    for row in cur.execute('select * from profiles order by p_id desc'):
+        db_list.append(row)
+    conn.commit()
+    conn.close()
+    return db_list
+
+
 class UserProfile(object):
     def __init__(self, usr):
-        self.usr = usr.lower()
+        self.usr = str(usr).lower()
 
     def user_exists(self):
         conn = sqlite3.connect('user_metrics.db')
@@ -46,6 +57,7 @@ class UserProfile(object):
             return True
 
     def create_profile(self):
+        read_db()
         # Check if user exists and create new profile if they don't
         conn = sqlite3.connect('user_metrics.db')
         cur = conn.cursor()
@@ -53,25 +65,31 @@ class UserProfile(object):
             # Save and close
             conn.commit()
             conn.close()
+            return 'Your profile already exists.'
         else:
             cur.execute('INSERT INTO profiles(username, cmd_quote, cmd_eightball, cmd_add) VALUES (?,?,?,?)',
                         (self.usr, 0, 0, 0, ))
             # Save and close
             conn.commit()
             conn.close()
+            return 'Profile created.'
 
     def increment_quote(self):
         # Open
         conn = sqlite3.connect('user_metrics.db')
         cur = conn.cursor()
-        # Read
-        for row in cur.execute('select * from profiles order by t_id desc'):
-            print(row)
         # Increment cmd_quote by 1
-        cur.execute('UPDATE profiles SET cmd_quote=cmd_quote+1 WHERE t_user=?', (self.usr,))
-        # Read
-        for row in cur.execute('select * from profiles order by t_id desc'):
-            print(row)
+        cur.execute('UPDATE profiles SET cmd_quote=cmd_quote+1 WHERE username=?', (self.usr,))
+        # Save and close
+        conn.commit()
+        conn.close()
+
+    def increment_add(self):
+        # Open
+        conn = sqlite3.connect('user_metrics.db')
+        cur = conn.cursor()
+        # Increment cmd_add by 1
+        cur.execute('UPDATE profiles SET cmd_add=cmd_add+1 WHERE username=?', (self.usr,))
         # Save and close
         conn.commit()
         conn.close()
@@ -80,18 +98,29 @@ class UserProfile(object):
         # Open
         conn = sqlite3.connect('user_metrics.db')
         cur = conn.cursor()
-        # Read
-        for row in cur.execute('select * from profiles order by t_id desc'):
-            print(row)
-        # Increment cmd_quote by 1
-        cur.execute('UPDATE profiles SET cmd_quote=cmd_quote+1 WHERE t_user=?', (self.usr,))
-        # Read
-        for row in cur.execute('select * from profiles order by t_id desc'):
-            print(row)
+        # Increment cmd_eightball by 1
+        cur.execute('UPDATE profiles SET cmd_eightball=cmd_eightball+1 WHERE username=?', (self.usr,))
         # Save and close
         conn.commit()
         conn.close()
 
+    def get_profile(self):
+        # Open
+        conn = sqlite3.connect('user_metrics.db')
+        cur = conn.cursor()
+        for row in cur.execute('select cmd_quote, cmd_eightball, cmd_add from profiles where username=?', (self.usr,)):
+           stat_list = row
+        # Save and close
+        conn.commit()
+        conn.close()
+        return stat_list
+
 
 if __name__ == '__main__':
     initialize_user_metrics_db()
+    read_db()
+    # Test get_profile
+    p = UserProfile('Kraine')
+    p.create_profile()
+    print(p.get_profile())
+
