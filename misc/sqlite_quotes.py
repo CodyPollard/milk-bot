@@ -101,7 +101,6 @@ def increment_call_count(q_id):
 
 
 def initialize_quote_db():
-    wipe_db()
     conn = sqlite3.connect('quotes.db')
     cur = conn.cursor()
     # Make table

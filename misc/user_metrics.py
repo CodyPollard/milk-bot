@@ -5,12 +5,6 @@ db_path = dir_path + '/user_metrics.db'
 
 
 def initialize_user_metrics_db():
-    # Delete DB before initializing
-    try:
-        os.remove(db_path)
-        print('DB removed')
-    except FileNotFoundError:
-        print('DB did not exist')
     # Test
     conn = sqlite3.connect('user_metrics.db')
     cur = conn.cursor()
@@ -35,6 +29,15 @@ def read_db():
     conn.commit()
     conn.close()
     return db_list
+
+
+def wipe_db():
+    # Delete DB before initializing
+    try:
+        os.remove(db_path)
+        print('DB removed')
+    except FileNotFoundError:
+        print('DB did not exist')
 
 
 def update_tables():
