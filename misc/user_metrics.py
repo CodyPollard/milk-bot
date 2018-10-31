@@ -228,13 +228,5 @@ class UserProfile(object):
 
 if __name__ == '__main__':
     initialize_user_metrics_db()
-    read_db()
-    # Test get_profile
-    p = UserProfile('cody pollard')
-    p.create_profile()
-    print(p.add_alias('cody'))
-    print('----------ADDING EXISTING ALIAS-----------')
-    print(p.add_alias('cody'))
-    read_db()
-    # print(get_alias('abc123'))
+
 

@@ -138,31 +138,4 @@ def read_db():
 
 if __name__ == '__main__':
     # Tests
-    # Profile Creation
-
-    user_metrics.initialize_user_metrics_db()
-    u = user_metrics.UserProfile('Cody pollard')
-    u.create_profile()
-    u.add_alias('cody')
-    user_metrics.read_db()
-    # # Quote Creation
-    wipe_db()
     initialize_quote_db()
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
