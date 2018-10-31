@@ -3,7 +3,7 @@ import sqlite3,  datetime, os
 from . import user_metrics
 
 dir_path = os.path.dirname(os.path.realpath(__file__))
-db_path = dir_path + '/quotes.db'
+db_path = dir_path + '/db/'
 regex = re.compile('[^a-zA-Z]')
 
 
@@ -63,7 +63,7 @@ class Quote(object):
     def add_quote(self):
         # Add validated quote to DB
         # Open
-        conn = sqlite3.connect('quotes.db')
+        conn = sqlite3.connect(db_path + 'quotes.db')
         cur = conn.cursor()
         # Insert a row
         cur.execute('INSERT INTO milk_quotes(add_date, add_profile, quote, author, call_count) VALUES (?,?,?,?,?)',
@@ -75,7 +75,7 @@ class Quote(object):
 
 def get_random_quote():
     # Open
-    conn = sqlite3.connect('quotes.db')
+    conn = sqlite3.connect(db_path + 'quotes.db')
     cur = conn.cursor()
     # Get row count
     cur.execute('select count(*) from milk_quotes')
@@ -93,7 +93,7 @@ def get_random_quote():
 
 
 def increment_call_count(q_id):
-    conn = sqlite3.connect('quotes.db')
+    conn = sqlite3.connect(db_path + 'quotes.db')
     cur = conn.cursor()
     cur.execute('UPDATE milk_quotes SET call_count=call_count+1 WHERE q_id=?', (q_id,))
     conn.commit()
@@ -101,7 +101,7 @@ def increment_call_count(q_id):
 
 
 def initialize_quote_db():
-    conn = sqlite3.connect('quotes.db')
+    conn = sqlite3.connect(db_path + 'quotes.db')
     cur = conn.cursor()
     # Make table
     cur.execute('''CREATE TABLE milk_quotes
@@ -124,7 +124,7 @@ def wipe_db():
 
 def read_db():
     # Open
-    conn = sqlite3.connect('quotes.db')
+    conn = sqlite3.connect(db_path + 'quotes.db')
     cur = conn.cursor()
     quote_list = []
     # Read

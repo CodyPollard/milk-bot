@@ -1,12 +1,12 @@
 import sqlite3, os
 
 dir_path = os.path.dirname(os.path.realpath(__file__))
-db_path = dir_path + '/user_metrics.db'
+db_path = dir_path + '/db/'
 
 
 def initialize_user_metrics_db():
     # Test
-    conn = sqlite3.connect('user_metrics.db')
+    conn = sqlite3.connect(db_path + 'user_metrics.db')
     cur = conn.cursor()
     # Make table
     cur.execute('''CREATE TABLE profiles
@@ -20,7 +20,7 @@ def initialize_user_metrics_db():
 
 
 def read_db():
-    conn = sqlite3.connect('user_metrics.db')
+    conn = sqlite3.connect(db_path + 'user_metrics.db')
     cur = conn.cursor()
     db_list = []
     for row in cur.execute('select * from profiles order by p_id desc'):
@@ -41,7 +41,7 @@ def wipe_db():
 
 
 def update_tables():
-    conn = sqlite3.connect('user_metrics.db')
+    conn = sqlite3.connect(db_path + 'user_metrics.db')
     cur = conn.cursor()
     cur.execute('alter table profiles add column "alias" "text"')
 
@@ -49,7 +49,7 @@ def update_tables():
 # Returns a list of alias for a given profile or matching alias
 def get_alias(name):
     # Open
-    conn = sqlite3.connect('user_metrics.db')
+    conn = sqlite3.connect(db_path + 'user_metrics.db')
     cur = conn.cursor()
     if UserProfile(name).user_exists():
         # Get listed alias for this user
@@ -73,7 +73,7 @@ class UserProfile(object):
         self.usr = str(usr).lower()
 
     def user_exists(self, alt_user=None):
-        conn = sqlite3.connect('user_metrics.db')
+        conn = sqlite3.connect(db_path + 'user_metrics.db')
         cur = conn.cursor()
         if alt_user is None:
             print('Alt User is None')
@@ -105,7 +105,7 @@ class UserProfile(object):
                 return True
 
     def alias_exists(self, name):
-        conn = sqlite3.connect('user_metrics.db')
+        conn = sqlite3.connect(db_path + 'user_metrics.db')
         cur = conn.cursor()
         # Try to match given alias to existing profile
         print('Checking alias of existing profiles for match.')
@@ -121,7 +121,7 @@ class UserProfile(object):
     def create_profile(self):
         read_db()
         # Check if user exists and create new profile if they don't
-        conn = sqlite3.connect('user_metrics.db')
+        conn = sqlite3.connect(db_path + 'user_metrics.db')
         cur = conn.cursor()
         if self.user_exists():
             # Save and close
@@ -140,7 +140,7 @@ class UserProfile(object):
         read_db()
         print('Injecting alt_user: {}'.format(alt_user))
         # Check if user exists and create new profile if they don't
-        conn = sqlite3.connect('user_metrics.db')
+        conn = sqlite3.connect(db_path + 'user_metrics.db')
         cur = conn.cursor()
         if self.user_exists(alt_user):
             # Save and close
@@ -157,7 +157,7 @@ class UserProfile(object):
 
     def increment_quote(self):
         # Open
-        conn = sqlite3.connect('user_metrics.db')
+        conn = sqlite3.connect(db_path + 'user_metrics.db')
         cur = conn.cursor()
         # Increment cmd_quote by 1
         cur.execute('UPDATE profiles SET cmd_quote=cmd_quote+1 WHERE username=?', (self.usr,))
@@ -167,7 +167,7 @@ class UserProfile(object):
 
     def increment_add(self):
         # Open
-        conn = sqlite3.connect('user_metrics.db')
+        conn = sqlite3.connect(db_path + 'user_metrics.db')
         cur = conn.cursor()
         # Increment cmd_add by 1
         cur.execute('UPDATE profiles SET cmd_add=cmd_add+1 WHERE username=?', (self.usr,))
@@ -177,7 +177,7 @@ class UserProfile(object):
 
     def increment_eightball(self):
         # Open
-        conn = sqlite3.connect('user_metrics.db')
+        conn = sqlite3.connect(db_path + 'user_metrics.db')
         cur = conn.cursor()
         # Increment cmd_eightball by 1
         cur.execute('UPDATE profiles SET cmd_eightball=cmd_eightball+1 WHERE username=?', (self.usr,))
@@ -187,7 +187,7 @@ class UserProfile(object):
 
     def get_profile(self):
         # Open
-        conn = sqlite3.connect('user_metrics.db')
+        conn = sqlite3.connect(db_path + 'user_metrics.db')
         cur = conn.cursor()
         for row in cur.execute('select cmd_quote, cmd_eightball, cmd_add, alias from profiles where username=?', (self.usr,)):
             stat_list = row
@@ -197,7 +197,7 @@ class UserProfile(object):
         return stat_list
 
     def add_alias(self, alias):
-        conn = sqlite3.connect('user_metrics.db')
+        conn = sqlite3.connect(db_path + 'user_metrics.db')
         cur = conn.cursor()
         alias = alias.strip().lower()
         a = cur.execute('select alias from profiles where username=?', (self.usr,))
